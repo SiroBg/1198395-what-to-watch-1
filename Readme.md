@@ -4,3 +4,7 @@
 * Наставник: [Сергей Парфенов](https://htmlacademy.ru/profile/id926645).
 
 ---
+
+# Использование приложения:
+
+* `php app-cli.php [imdb id фильма]`
