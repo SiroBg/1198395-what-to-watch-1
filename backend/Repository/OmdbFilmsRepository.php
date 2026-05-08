@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repository;
+namespace App\FilmsRepository;
 
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
-class RemoteRepository implements RepositoryInterface
+class OmdbFilmsRepository implements FilmsRepositoryInterface
 {
     public function __construct(
         private ClientInterface $httpClient,
@@ -14,7 +14,7 @@ class RemoteRepository implements RepositoryInterface
     ) {
     }
 
-    public function getMovieByImdbId(string $imdbId): array
+    public function getFilmByImdbId(string $imdbId): array
     {
         $url = 'https://www.omdbapi.com/?apikey=' . $this->apiKey . '&i=' . $imdbId;
 

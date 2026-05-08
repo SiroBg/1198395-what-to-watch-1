@@ -2,17 +2,17 @@
 
 namespace App\Service;
 
-use App\Repository\RepositoryInterface;
+use App\FilmsRepository\FilmsRepositoryInterface;
 
 class MovieService
 {
     public function __construct(
-        private RepositoryInterface $repository,
+        private FilmsRepositoryInterface $repository,
     ) {
     }
 
     public function getMovie(string $imdbId): array
     {
-        return $this->repository->getMovieByImdbId($imdbId);
+        return $this->repository->getFilmByImdbId($imdbId);
     }
 }
