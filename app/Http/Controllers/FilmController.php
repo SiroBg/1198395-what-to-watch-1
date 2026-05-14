@@ -50,4 +50,14 @@ class FilmController extends Controller
     {
         //
     }
+
+    public function promo()
+    {
+
+    }
+
+    public function setPromo(string $id)
+    {
+
+    }
 }

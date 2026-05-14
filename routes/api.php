@@ -18,6 +18,10 @@ Route::post('/logout', [UserController::class, 'logout']);
 Route::get('/films', [FilmController::class, 'index']);
 Route::get('/films/{id}', [FilmController::class, 'show']);
 Route::get('/films/{id}/similar', [FilmController::class, 'similar']);
+Route::patch('/films/{id}', [FilmController::class, 'update']);
+Route::post('/films', [FilmController::class, 'store']);
+Route::get('/promo', [FilmController::class, 'promo']);
+Route::post('/promo/{id}', [FilmController::class, 'setPromo']);
 
 Route::get('/genres', [GenreController::class, 'index']);
 Route::patch('/genres/{genre}', [GenreController::class, 'update']);
