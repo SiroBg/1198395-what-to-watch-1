@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "api/what-to-watch",
+    "name": "laravel/laravel",
     "type": "project",
-    "description": "Api for movies",
+    "description": "The skeleton application for the Laravel framework.",
     "keywords": [
         "laravel",
         "framework"
@@ -11,18 +11,18 @@
     "require": {
         "php": "^8.3",
         "guzzlehttp/guzzle": "^7.10",
-        "laravel/framework": "^13.7",
-        "laravel/sanctum": "^4.0",
+        "laravel/framework": "^13.8",
+        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
         "nyholm/psr7": "^1.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
-        "laravel-lang/lang": "^12.17",
+        "laravel-lang/lang": "*",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
-        "laravel/sail": "^1.58",
+        "laravel/sail": "^1.59",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "phpunit/phpunit": "^12.5.12"
