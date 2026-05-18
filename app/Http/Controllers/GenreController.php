@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\Fail;
+use App\Http\Responses\Success;
 use Illuminate\Http\Request;
 
 class GenreController extends Controller
@@ -11,23 +13,11 @@ class GenreController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        try {
+            return new Success([]);
+        } catch (\Throwable $e) {
+            return new Fail($e);
+        }
     }
 
     /**
@@ -35,14 +25,10 @@ class GenreController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try {
+            return new Success([]);
+        } catch (\Throwable $e) {
+            return new Fail($e);
+        }
     }
 }
