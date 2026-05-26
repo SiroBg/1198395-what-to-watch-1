@@ -22,8 +22,8 @@ return new class () extends Migration {
             $table->string('preview_video_link')->nullable();
             $table->text('description')->nullable();
             $table->string('director')->nullable();
-            $table->integer('run_time')->nullable();
-            $table->integer('released')->nullable();
+            $table->unsignedSmallInteger('run_time')->nullable();
+            $table->unsignedSmallInteger('released')->nullable();
             $table->string('imdb_id')->unique();
             $table->enum('status', ['pending', 'moderation', 'ready'])->default('pending');
         });

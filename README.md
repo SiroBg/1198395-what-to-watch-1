@@ -12,4 +12,4 @@
 * - `composer install` - установка необходимых зависимостей;
 * - `php artisan key:generate` - генерация ключа приложения;
 * - `./vendor/bin/sail up -d` - запуск докер контейнеров;
-* - `php artisan migrate` - выполнение миграций;
+* - `./vendor/bin/sail artisan migrate` - выполнение миграций;
