@@ -19,7 +19,7 @@ class FilmSeeder extends Seeder
         $films = Film::factory(50)->has(Actor::factory(20))->create();
 
         foreach ($films as $film) {
-            $film->roles()->attach(
+            $film->genres()->attach(
                 $genres->random()->pluck('id'),
             );
         }
