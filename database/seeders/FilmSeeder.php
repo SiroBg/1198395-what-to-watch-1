@@ -14,6 +14,14 @@ class FilmSeeder extends Seeder
      */
     public function run(): void
     {
-        Film::factory(50)->has(Actor::factory(20))->has(Genre::factory(5))->create();
+        $genres = Genre::all();
+
+        $films = Film::factory(50)->has(Actor::factory(20))->create();
+
+        foreach ($films as $film) {
+            $film->roles()->attach(
+                $genres->random()->pluck('id'),
+            );
+        }
     }
 }
