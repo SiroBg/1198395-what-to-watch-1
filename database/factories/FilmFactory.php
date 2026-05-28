@@ -31,7 +31,7 @@ class FilmFactory extends Factory
             'run_time' => fake()->numberBetween(1, 1000),
             'released' => fake()->numberBetween(1930, 2026),
             'imdb_id' => fake()->regexify('tt[0-9]{7}'),
-            'status' => fake()->unique()->randomElement(FilmStatus::cases()),
+            'status' => fake()->randomElement(FilmStatus::cases()),
         ];
     }
 }

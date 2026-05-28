@@ -20,8 +20,6 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    protected $with = ['roles, films'];
-
     protected $hidden =
         [
             'created_at',

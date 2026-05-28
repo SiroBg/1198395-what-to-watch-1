@@ -10,7 +10,6 @@ class Genre extends Model
 {
     /** @use HasFactory<\Database\Factories\GenreFactory> */
     use HasFactory;
-    protected $with = ['films'];
 
     protected $hidden =
         [

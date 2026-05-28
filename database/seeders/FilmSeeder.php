@@ -16,7 +16,7 @@ class FilmSeeder extends Seeder
     {
         $genres = Genre::all();
 
-        $films = Film::factory(50)->has(Actor::factory(20))->create();
+        $films = Film::factory(50)->has(Actor::factory(10))->create();
 
         foreach ($films as $film) {
             $film->genres()->attach(

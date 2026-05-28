@@ -10,7 +10,6 @@ class Role extends Model
 {
     /** @use HasFactory<\Database\Factories\RoleFactory> */
     use HasFactory;
-    protected $with = ['users'];
 
     protected $hidden =
         [

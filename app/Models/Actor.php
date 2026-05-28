@@ -10,7 +10,6 @@ class Actor extends Model
 {
     /** @use HasFactory<\Database\Factories\ActorFactory> */
     use HasFactory;
-    protected $with = ['films'];
 
     protected $hidden =
         [

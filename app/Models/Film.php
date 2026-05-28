@@ -13,8 +13,6 @@ class Film extends Model
     /** @use HasFactory<\Database\Factories\FilmFactory> */
     use HasFactory;
 
-    protected $with = ['genres, actors, users'];
-
     protected $casts =
         [
             'run_time' => 'int',
