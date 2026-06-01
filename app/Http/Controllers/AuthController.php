@@ -19,9 +19,9 @@ class AuthController extends Controller
 
             $params = $request->safe()->except('file');
 
-            $user = User::create([$params]);
+            $user = User::create($params);
 
-            $user->roles->attach($role->id);
+            $user->roles()->attach($role->id);
 
             $token = $user->createToken('auth-token');
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
         try {
             Auth::user()->tokens()->delete();
 
-            return new Success([], 204);
+            return new Success(['message' => 'Logged out'], 204);
         } catch (\Throwable $e) {
             return new Fail($e);
         }
