@@ -5,16 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Responses\Fail;
 use App\Http\Responses\Success;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
         try {
-            return new Success([]);
+            $user = Auth::user()->load('roles');
+
+            return new Success([
+                'name' => $user->name,
+                'email' => $user->email,
+                'file' => $user->file,
+                'role' => $user->roles->first()?->name,
+            ]);
         } catch (\Throwable $e) {
             return new Fail($e);
         }
@@ -23,19 +31,28 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
-    }
+            $user = Auth::user()->load('roles');
 
-    public function logout()
-    {
-        try {
-            return new Success([]);
+            $params = $request->safe()->except('file');
+
+            if ($request->hasFile('file')) {
+                $params['file'] = $request
+                    ->file('file')
+                    ->store('avatars', 'public');
+            }
+
+            $user->update($params);
+
+            return new Success([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'file' => $user->file,
+                'role' => $user->roles->first()?->name,
+            ]);
         } catch (\Throwable $e) {
             return new Fail($e);
         }
