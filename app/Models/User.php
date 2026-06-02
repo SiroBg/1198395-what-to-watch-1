@@ -52,9 +52,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
-    public function films(): BelongsToMany
+    public function favoriteFilms(): BelongsToMany
     {
-        return $this->belongsToMany(Film::class);
+        return $this->belongsToMany(Film::class, 'film_user', 'user_id', 'film_id');
     }
 
     public function comments(): HasMany

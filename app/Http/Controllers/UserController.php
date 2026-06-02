@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Responses\Fail;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +31,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request)
+    public function update(UpdateUserRequest $request)
     {
         try {
             $user = Auth::user()->load('roles');
