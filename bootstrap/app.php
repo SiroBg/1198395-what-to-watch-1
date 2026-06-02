@@ -1,5 +1,6 @@
 <?php
 
+use App\http\Responses\Fail;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,5 +16,28 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Throwable $e, $request) {
+
+            if (! $request->expectsJson()) {
+                return null;
+            }
+
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                return Fail::fromException($e, 422)
+                    ->toResponse($request);
+            }
+
+            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                return Fail::fromException($e, 401)
+                    ->toResponse($request);
+            }
+
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                return Fail::fromException($e, $e->getStatusCode())
+                    ->toResponse($request);
+            }
+
+            return Fail::fromException($e, 500)
+                ->toResponse($request);
+        });
     })->create();

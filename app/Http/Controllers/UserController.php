@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
-use App\Http\Responses\Fail;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,18 +13,14 @@ class UserController extends Controller
      */
     public function show()
     {
-        try {
-            $user = Auth::user()->load('roles');
+        $user = Auth::user()->load('roles');
 
-            return new Success([
-                'name' => $user->name,
-                'email' => $user->email,
-                'file' => $user->file,
-                'role' => $user->roles->first()?->name,
-            ]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
+        return new Success([
+            'name' => $user->name,
+            'email' => $user->email,
+            'file' => $user->file,
+            'role' => $user->roles->first()?->name,
+        ]);
     }
 
     /**
@@ -33,28 +28,24 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request)
     {
-        try {
-            $user = Auth::user()->load('roles');
+        $user = Auth::user()->load('roles');
 
-            $params = $request->safe()->except('file');
+        $params = $request->safe()->except('file');
 
-            if ($request->hasFile('file')) {
-                $params['file'] = $request
-                    ->file('file')
-                    ->store('avatars', 'public');
-            }
-
-            $user->update($params);
-
-            return new Success([
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'file' => $user->file,
-                'role' => $user->roles->first()?->name,
-            ]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
+        if ($request->hasFile('file')) {
+            $params['file'] = $request
+                ->file('file')
+                ->store('avatars', 'public');
         }
+
+        $user->update($params);
+
+        return new Success([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'file' => $user->file,
+            'role' => $user->roles->first()?->name,
+        ]);
     }
 }

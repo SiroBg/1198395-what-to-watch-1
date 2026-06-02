@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responses\Fail;
-use App\Http\Responses\Success;
 use Illuminate\Http\Request;
 
 class FilmController extends Controller
@@ -13,11 +11,6 @@ class FilmController extends Controller
      */
     public function index()
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -25,11 +18,6 @@ class FilmController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -37,11 +25,6 @@ class FilmController extends Controller
      */
     public function show(string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -49,37 +32,17 @@ class FilmController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     public function similar(string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     public function promo()
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     public function setPromo(string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 }

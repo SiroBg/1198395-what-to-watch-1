@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responses\Fail;
-use App\Http\Responses\Success;
 use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
@@ -13,11 +11,6 @@ class FavoriteController extends Controller
      */
     public function index()
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -25,11 +18,6 @@ class FavoriteController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -37,10 +25,5 @@ class FavoriteController extends Controller
      */
     public function destroy(string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 }

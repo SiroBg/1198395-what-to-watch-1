@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responses\Fail;
-use App\Http\Responses\Success;
 use Illuminate\Http\Request;
 
 class GenreController extends Controller
@@ -13,11 +11,6 @@ class GenreController extends Controller
      */
     public function index()
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 
     /**
@@ -25,10 +18,5 @@ class GenreController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
-            return new Success([]);
-        } catch (\Throwable $e) {
-            return new Fail($e);
-        }
     }
 }

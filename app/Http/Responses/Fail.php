@@ -27,6 +27,11 @@ class Fail extends Base
         };
     }
 
+    public static function fromException(Throwable $e, int $status): self
+    {
+        return new self($e, $status);
+    }
+
     protected function makeResponseData(): ?array
     {
         return [
