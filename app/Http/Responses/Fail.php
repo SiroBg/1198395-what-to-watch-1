@@ -8,12 +8,15 @@ use Throwable;
 class Fail extends Base
 {
     protected string $message;
+    protected Throwable $exception;
 
     public function __construct(
         Throwable $exception,
         int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,
     ) {
         parent::__construct([], $statusCode);
+
+        $this->exception = $exception;
 
         $this->message = match ($statusCode) {
             400 => 'Некорректный запрос.',
