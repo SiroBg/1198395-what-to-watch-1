@@ -1,6 +1,6 @@
 <?php
 
-use App\http\Responses\Fail;
+use App\Http\Responses\Fail;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,26 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, $request) {
 
-            if (! $request->expectsJson()) {
-                return null;
-            }
+            $status = match (true) {
+                $e instanceof \Illuminate\Validation\ValidationException => 422,
+                $e instanceof \Illuminate\Auth\AuthenticationException => 401,
+                $e instanceof \Illuminate\Auth\Access\AuthorizationException => 403,
+                $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface => $e->getStatusCode(),
+                default => 500,
+            };
 
-            if ($e instanceof \Illuminate\Validation\ValidationException) {
-                return Fail::fromException($e, 422)
-                    ->toResponse($request);
-            }
-
-            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-                return Fail::fromException($e, 401)
-                    ->toResponse($request);
-            }
-
-            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
-                return Fail::fromException($e, $e->getStatusCode())
-                    ->toResponse($request);
-            }
-
-            return Fail::fromException($e, 500)
+            return Fail::fromException($e, $status)
                 ->toResponse($request);
         });
     })->create();
