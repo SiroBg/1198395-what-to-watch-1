@@ -11,7 +11,7 @@ class UpdateUserRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     public function rules()
@@ -19,7 +19,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => [
-                'required',
+                'sometimes',
                 'string',
                 'email',
                 'max:255',

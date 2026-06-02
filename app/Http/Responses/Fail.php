@@ -15,7 +15,16 @@ class Fail extends Base
     ) {
         parent::__construct([], $statusCode);
 
-        $this->message = $exception->getMessage();
+        $this->message = match ($statusCode) {
+            400 => 'Некорректный запрос.',
+            401 => 'Запрос требует аутентификации.',
+            403 => 'Доступ запрещён.',
+            404 => 'Запрашиваемая страница не существует.',
+            409 => 'Конфликт данных.',
+            422 => 'Переданные данные не корректны.',
+            500 => 'Внутренняя ошибка сервера.',
+            default => 'Произошла ошибка.',
+        };
     }
 
     protected function makeResponseData(): ?array

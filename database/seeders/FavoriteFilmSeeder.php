@@ -16,7 +16,7 @@ class FavoriteFilmSeeder extends Seeder
         $films = Film::all();
 
         User::all()->each(function ($user) use ($films) {
-            $user->films()->attach(
+            $user->favoriteFilms()->attach(
                 $films->random(rand(2, 5))->pluck('id'),
             );
         });
