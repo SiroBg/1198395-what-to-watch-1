@@ -9,14 +9,17 @@ class Fail extends Base
 {
     protected string $message;
     protected Throwable $exception;
+    protected array $errors;
 
     public function __construct(
         Throwable $exception,
         int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR,
+        array $errors = [],
     ) {
         parent::__construct([], $statusCode);
 
         $this->exception = $exception;
+        $this->errors = $errors;
 
         $this->message = match ($statusCode) {
             400 => 'Некорректный запрос.',
@@ -30,15 +33,17 @@ class Fail extends Base
         };
     }
 
-    public static function fromException(Throwable $e, int $status): self
+    public static function fromException(Throwable $e, int $status, array $errors = []): self
     {
-        return new self($e, $status);
+        return new self($e, $status, $errors);
     }
 
     protected function makeResponseData(): ?array
     {
-        return [
-            'message' => $this->message,
-        ];
+        $response['message'] = $this->message;
+        if (!empty($this->errors)) {
+            $response['errors'] = $this->errors;
+        }
+        return $response;
     }
 }

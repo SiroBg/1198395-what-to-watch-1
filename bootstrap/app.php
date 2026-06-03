@@ -17,16 +17,22 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, $request) {
-
-            $status = match (true) {
-                $e instanceof \Illuminate\Validation\ValidationException => 422,
-                $e instanceof \Illuminate\Auth\AuthenticationException => 401,
-                $e instanceof \Illuminate\Auth\Access\AuthorizationException => 403,
-                $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface => $e->getStatusCode(),
-                default => 500,
-            };
-
-            return Fail::fromException($e, $status)
+            switch (true) {
+                case $e instanceof \Illuminate\Validation\ValidationException:
+                    return Fail::fromException($e, 422, $e->errors())
                 ->toResponse($request);
+                case $e instanceof \Illuminate\Auth\AuthenticationException:
+                    return Fail::fromException($e, 401)
+                ->toResponse($request);
+                case $e instanceof \Illuminate\Auth\Access\AuthorizationException:
+                    return Fail::fromException($e, 403)
+                ->toResponse($request);
+                case $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface:
+                    return Fail::fromException($e, $e->getStatusCode())
+                ->toResponse($request);
+                default:
+                    return Fail::fromException($e, 500)
+                    ->toResponse($request);
+            }
         });
     })->create();
