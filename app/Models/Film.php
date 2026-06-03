@@ -36,7 +36,6 @@ class Film extends Model
             'video_link',
             'preview_video_link',
             'description',
-            'director',
             'run_time',
             'released',
             'imdb_id',
@@ -52,9 +51,14 @@ class Film extends Model
         return $this->belongsToMany(Actor::class);
     }
 
-    public function users(): BelongsToMany
+    public function directors(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(Director::class);
+    }
+
+    public function favoritedBy(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id');
     }
 
     public function comments(): HasMany

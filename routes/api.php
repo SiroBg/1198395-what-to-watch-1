@@ -8,15 +8,15 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(AuthController::class)->group(function () {
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
+Route::middleware('guest')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::controller(UserController::class)->group(function () {
-    Route::get('/user', 'show');
-    Route::patch('/user', 'update');
-    Route::post('/logout', 'logout');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [UserController::class, 'show']);
+    Route::patch('/user', [UserController::class, 'update']);
 });
 
 Route::controller(FilmController::class)->group(function () {

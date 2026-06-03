@@ -27,7 +27,6 @@ class FilmFactory extends Factory
             'video_link' => fake()->url(),
             'preview_video_link' => fake()->url(),
             'description' => fake()->text(),
-            'director' => fake()->name(),
             'run_time' => fake()->numberBetween(1, 1000),
             'released' => fake()->numberBetween(1930, 2026),
             'imdb_id' => fake()->regexify('tt[0-9]{7}'),
