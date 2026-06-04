@@ -15,12 +15,8 @@ class Comment extends Model
     protected $casts =
         [
             'rating' => 'int',
-        ];
-
-    protected $hidden =
-        [
-            'created_at',
-            'updated_at',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
 
     protected $fillable =
@@ -30,6 +26,8 @@ class Comment extends Model
             'user_id',
             'film_id',
             'comment_id',
+            'created_at',
+            'updated_at',
         ];
 
     public function user(): BelongsTo

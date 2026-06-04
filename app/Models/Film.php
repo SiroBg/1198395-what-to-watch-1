@@ -65,4 +65,32 @@ class Film extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function scopeGenre($query, ?int $genreId)
+    {
+        if (!$genreId) {
+            return $query;
+        }
+
+        return $query->whereHas(
+            'genres',
+            function ($q) use ($genreId) {
+                $q->where('genre.id', $genreId);
+            },
+        );
+    }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        if (!$status) {
+            return $query;
+        }
+
+        return $query->where('status', $status);
+    }
+
+    public function scopeSorting($query, string $field, string $direction)
+    {
+        return $query->orderBy($field, $direction);
+    }
 }
