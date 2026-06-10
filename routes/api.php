@@ -27,15 +27,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware(['auth:sanctum', 'can:moderator'])->group(function () {
     Route::patch('/genres/{genre}', [GenreController::class, 'update']);
-    Route::post('/promo/{id}', [FilmController::class, 'setPromo']);
+    Route::post('/promo/{film}', [FilmController::class, 'setPromo']);
     Route::post('/films', [FilmController::class, 'store']);
-    Route::patch('/films/{id}', [FilmController::class, 'update']);
+    Route::patch('/films/{film}', [FilmController::class, 'update']);
 });
 
 Route::controller(FilmController::class)->group(function () {
     Route::get('/films', 'index');
-    Route::get('/films/{id}', 'show');
-    Route::get('/films/{id}/similar', 'similar');
+    Route::get('/films/{film}', 'show');
+    Route::get('/films/{film}/similar', 'similar');
     Route::get('/promo', 'promo');
 });
 

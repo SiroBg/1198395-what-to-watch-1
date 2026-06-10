@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Http\Requests;
+
+use App\Enums\FilmStatus;
+use App\Models\Film;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateFilmRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return auth()->check();
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'poster_image' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'preview_image' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'background_image' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'background_color' => ['sometimes', 'nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'video_link' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'preview_video_link' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'directors' => ['sometimes', 'array'],
+            'directors.*' => ['string', 'max:255'],
+            'starring' => ['sometimes', 'array'],
+            'starring.*' => ['string', 'max:255'],
+            'genre' => ['sometimes', 'array'],
+            'genre.*' => ['string', 'max:255'],
+            'run_time' => ['sometimes', 'nullable', 'integer'],
+            'released' => ['sometimes', 'nullable', 'integer'],
+            'imdb_id' => ['required', 'regex:/^tt\d+$/', Rule::unique(Film::class, 'imdb_id')],
+            'status' => ['required', Rule::enum(FilmStatus::class)],
+        ];
+    }
+}

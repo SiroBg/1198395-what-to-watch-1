@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateGenreRequest;
+use App\Http\Responses\Success;
+use App\Models\Genre;
 
 class GenreController extends Controller
 {
@@ -11,12 +13,18 @@ class GenreController extends Controller
      */
     public function index()
     {
+        $genres = Genre::all();
+
+        return new Success($genres->toArray());
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateGenreRequest $request, Genre $genre)
     {
+        $genre->update($request->validated());
+
+        return new Success($genre->toArray());
     }
 }

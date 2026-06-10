@@ -22,7 +22,7 @@ class FavoriteController extends Controller
             ->orderByPivot('created_at', 'desc')
             ->paginate(8);
 
-        return new Success(['films' => $films]);
+        return new Success($films->toArray());
     }
 
     /**

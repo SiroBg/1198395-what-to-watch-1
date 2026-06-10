@@ -32,7 +32,7 @@ class FilmIndexRequest extends FormRequest
             $status = $this->input('status');
 
             if (
-                in_array($status, ['pending', 'moderate'])
+                in_array($status, [FilmStatus::PENDING->value, FilmStatus::MODERATION->value])
                 && (!$this->user() || !$this->user()->hasRole('moderator'))
             ) {
                 $validator->errors()->add(

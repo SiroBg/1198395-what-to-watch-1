@@ -20,17 +20,17 @@ class CommentController extends Controller
             'comment_id' => $request->comment_id,
         ]);
 
-        return new Success(['comment' => $comment], 201);
+        return new Success($comment->toArray(), 201);
     }
     /**
      * Display the specified resource.
      */
     public function show(Film $film)
     {
-        return new Success([
-            'comments' => $film->comments()
-            ->with('user:id,name')->orderBy('created_at', 'desc')->get(),
-            ]);
+        return new Success(
+            $film->comments()
+            ->with('user:id,name')->orderBy('created_at', 'desc')->get()->toArray(),
+        );
     }
 
     /**
@@ -48,7 +48,7 @@ class CommentController extends Controller
                 : $request->rating,
         ]);
 
-        return new Success(['comment' => $comment], 201);
+        return new Success($comment->toArray(), 201);
     }
 
     /**
