@@ -52,7 +52,7 @@ class FavoriteController extends Controller
 
         $alreadyFavorited = $user->favoriteFilms()->where('film_id', $film->id)->exists();
 
-        if ($alreadyFavorited) {
+        if (!$alreadyFavorited) {
             abort(422, 'Фильм не находится в избранном');
         }
 
