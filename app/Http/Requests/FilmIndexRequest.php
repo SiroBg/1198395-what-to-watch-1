@@ -18,7 +18,7 @@ class FilmIndexRequest extends FormRequest
     {
         return [
             'page' => ['sometimes', 'integer', 'min:1'],
-            'genre' => ['sometimes', 'integer', Rule::exists('genres', 'id')],
+            'genre' => ['sometimes', 'nullable', 'integer', Rule::exists('genres', 'id')],
             'status' => ['sometimes', Rule::enum(FilmStatus::class)],
             'order_by' => ['sometimes', Rule::in(['released','rating'])],
             'order_to' => ['sometimes', Rule::in(['asc', 'desc'])] ,

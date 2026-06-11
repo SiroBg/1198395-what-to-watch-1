@@ -25,7 +25,7 @@ class FilmController extends Controller
 
         $films = Film::query()->select('id', 'name', 'preview_image', 'preview_video_link')
             ->genre($validated['genre'] ?? null)
-            ->status($validated['status'] ?? FilmStatus::READY->value)
+            ->status($validated['status'] ?? null)
             ->sorting($validated['order_by'] ?? 'released', $validated['order_to'] ?? 'desc')
             ->paginate(8);
 
@@ -71,18 +71,20 @@ class FilmController extends Controller
         $film->directors()->sync($directorIds);
         $film->genres()->sync($genreIds);
 
-        $film->load(['actors', 'directors', 'genre']);
+        $film->load(['actors', 'directors', 'genres']);
 
         return new Success($film->toArray());
     }
 
     public function similar(Film $film)
     {
+        $filmRandomGenreId = $film->genres()->inRandomOrder()->first()->id;
+
         $films = Film::query()->select('id', 'name', 'preview_image', 'preview_video_link')
-            ->genre($film->genres()->inRandomOrder()->value('id'))
+            ->genre($filmRandomGenreId)
             ->status(FilmStatus::READY->value)
             ->sorting('released', 'desc')
-            ->limit(4);
+            ->limit(4)->get();
 
         return new Success($films->toArray());
     }
@@ -98,8 +100,9 @@ class FilmController extends Controller
 
     public function setPromo(Film $film)
     {
-        Promo::updateOrCreate(
-            ['id' => 1],
+        Promo::truncate();
+
+        Promo::create(
             ['film_id' => $film->id],
         );
 
@@ -118,7 +121,7 @@ class FilmController extends Controller
     private function getFilmInfo(int $id)
     {
         return Film::query()
-            ->withAggregate('comments as rating', 'avg', 'rating')
+            ->withRating()
             ->withCount('comments as scores_count')
             ->with(['actors', 'directors', 'genres'])
             ->whereKey($id)

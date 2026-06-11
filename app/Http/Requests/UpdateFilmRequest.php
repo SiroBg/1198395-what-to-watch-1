@@ -16,6 +16,8 @@ class UpdateFilmRequest extends FormRequest
 
     public function rules(): array
     {
+        $filmId = $this->route('film')->id ?? $this->route('film');
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'poster_image' => ['sometimes', 'nullable', 'string', 'max:255'],
@@ -33,7 +35,7 @@ class UpdateFilmRequest extends FormRequest
             'genre.*' => ['string', 'max:255'],
             'run_time' => ['sometimes', 'nullable', 'integer'],
             'released' => ['sometimes', 'nullable', 'integer'],
-            'imdb_id' => ['required', 'regex:/^tt\d+$/', Rule::unique(Film::class, 'imdb_id')],
+            'imdb_id' => ['required', 'regex:/^tt\d+$/', Rule::unique(Film::class, 'imdb_id')->ignore($filmId)],
             'status' => ['required', Rule::enum(FilmStatus::class)],
         ];
     }

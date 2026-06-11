@@ -30,9 +30,11 @@ class FavoriteController extends Controller
      */
     public function store(Film $film)
     {
-        $user = Auth::user()->with('films');
+        $user = Auth::user();
 
-        if ($user->favoriteFilms()->where('id', $film->id)->exists()) {
+        $alreadyFavorited = $user->favoriteFilms()->where('film_id', $film->id)->exists();
+
+        if ($alreadyFavorited) {
             abort(422, 'Фильм уже добавлен в избранное');
         }
 
@@ -46,9 +48,11 @@ class FavoriteController extends Controller
      */
     public function destroy(Film $film)
     {
-        $user = Auth::user()->with('films');
+        $user = Auth::user();
 
-        if (!$user->favoriteFilms()->where('id', $film->id)->exists()) {
+        $alreadyFavorited = $user->favoriteFilms()->where('film_id', $film->id)->exists();
+
+        if ($alreadyFavorited) {
             abort(422, 'Фильм не находится в избранном');
         }
 

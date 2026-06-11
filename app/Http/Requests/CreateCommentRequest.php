@@ -37,9 +37,10 @@ class CreateCommentRequest extends FormRequest
                 'min:1',
                 'max:10',
                 'required_without:comment_id',
-                'prohibited_if:comment_id,!=,null',
+                'prohibited_unless:comment_id,null',
             ],
             'comment_id' => [
+                'sometimes',
                 'nullable',
                 'integer',
                 Rule::exists('comments', 'id'),
@@ -58,7 +59,7 @@ class CreateCommentRequest extends FormRequest
                     return;
                 }
 
-                if ($comment->movie_id != $this->route('film')->id) {
+                if ($comment->film_id != $this->route('film')->id) {
                     $validator->errors()->add(
                         'comment_id',
                         'Комментарий принадлежит другому фильму.',

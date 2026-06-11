@@ -69,29 +69,30 @@ class Film extends Model
 
     public function scopeGenre($query, ?int $genreId)
     {
-        if (!$genreId) {
-            return $query;
-        }
-
-        return $query->whereHas(
-            'genres',
-            function ($q) use ($genreId) {
-                $q->where('genre.id', $genreId);
-            },
-        );
+        return $genreId
+            ? $query->whereHas('genres', fn ($q) => $q->whereKey($genreId))
+            : $query;
     }
 
     public function scopeStatus($query, ?string $status)
     {
         if (!$status) {
-            return $query;
+            $status = FilmStatus::READY->value;
         }
 
         return $query->where('status', $status);
     }
 
+    public function scopeWithRating($query)
+    {
+        return $query->withAvg('comments as rating', 'rating');
+    }
+
     public function scopeSorting($query, string $field, string $direction)
     {
+        if ($field === 'rating') {
+            $query->withRating();
+        }
         return $query->orderBy($field, $direction);
     }
 }
