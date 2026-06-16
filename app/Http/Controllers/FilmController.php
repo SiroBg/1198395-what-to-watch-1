@@ -6,6 +6,7 @@ use App\Enums\FilmStatus;
 use App\Http\Requests\CreateFilmRequest;
 use App\Http\Requests\FilmIndexRequest;
 use App\Http\Requests\UpdateFilmRequest;
+use App\Http\Resources\FilmResource;
 use App\Http\Responses\Success;
 use App\Models\Actor;
 use App\Models\Director;
@@ -49,9 +50,9 @@ class FilmController extends Controller
      */
     public function show(Film $film)
     {
-        $film = $this->getFilmInfo($film->id);
+        $film = $this->getFilmResource($film->id);
 
-        return new Success($film->toArray());
+        return new Success($film->resole());
     }
 
     /**
@@ -93,9 +94,9 @@ class FilmController extends Controller
     {
         $promo = Promo::firstOrFail();
 
-        $film = $this->getFilmInfo($promo->film_id);
+        $film = $this->getFilmResource($promo->film_id);
 
-        return new Success($film->toArray());
+        return new Success($film->resolve());
     }
 
     public function setPromo(Film $film)
@@ -106,7 +107,7 @@ class FilmController extends Controller
             ['film_id' => $film->id],
         );
 
-        return new Success($this->getFilmInfo($film->id)->toArray(), 201);
+        return new Success($this->getFilmResource($film->id)->resolve(), 201);
     }
 
     private function createOrGetIds(array $arrayName, string $modelClass)
@@ -118,13 +119,22 @@ class FilmController extends Controller
             );
     }
 
-    private function getFilmInfo(int $id)
+    private function getFilmResource(int $filmId)
     {
-        return Film::query()
+        $userId = auth()->id();
+
+        $film = Film::query()
             ->withRating()
             ->withCount('comments as scores_count')
             ->with(['actors', 'directors', 'genres'])
-            ->whereKey($id)
+            ->whereKey($filmId)
+            ->when($userId, function ($query) use ($userId) {
+                $query->withExists(['users as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                }]);
+            })
             ->firstOrFail();
+
+        return new FilmResource($film);
     }
 }

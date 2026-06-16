@@ -44,22 +44,22 @@ class Film extends Model
 
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class)->withTimestamps();
     }
 
     public function actors(): BelongsToMany
     {
-        return $this->belongsToMany(Actor::class);
+        return $this->belongsToMany(Actor::class)->withTimestamps();
     }
 
     public function directors(): BelongsToMany
     {
-        return $this->belongsToMany(Director::class);
+        return $this->belongsToMany(Director::class)->withTimestamps();
     }
 
     public function favoritedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id');
+        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id')->withTimestamps();
     }
 
     public function comments(): HasMany

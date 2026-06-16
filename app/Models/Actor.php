@@ -24,6 +24,6 @@ class Actor extends Model
 
     public function films(): BelongsToMany
     {
-        return $this->belongsToMany(Film::class);
+        return $this->belongsToMany(Film::class)->withTimestamps();
     }
 }

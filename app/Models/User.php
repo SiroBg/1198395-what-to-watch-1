@@ -49,12 +49,12 @@ class User extends Authenticatable
 
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
     public function favoriteFilms(): BelongsToMany
     {
-        return $this->belongsToMany(Film::class, 'film_user', 'user_id', 'film_id');
+        return $this->belongsToMany(Film::class, 'film_user', 'user_id', 'film_id')->withTimestamps();
     }
 
     public function comments(): HasMany
