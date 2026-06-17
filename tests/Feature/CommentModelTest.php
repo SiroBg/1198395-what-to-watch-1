@@ -19,9 +19,9 @@ class CommentModelTest extends TestCase
         $comment = Comment::factory()->create();
         $comment->user_id = $user->id;
 
-        $this->assertEquals('Иван Иванов', $comment->authorName);
+        $this->assertEquals('Иван Иванов', $comment->author_name);
 
         $guestComment = Comment::factory()->guest()->create();
-        $this->assertEquals('Гость', $guestComment->authorName);
+        $this->assertEquals('Гость', $guestComment->author_name);
     }
 }

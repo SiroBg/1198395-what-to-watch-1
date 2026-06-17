@@ -23,7 +23,7 @@ class CommentResource extends JsonResource
             'updated_at' => $this->updated_at,
             'text' => $this->text,
             'rating' => $this->rating,
-            'author' => $this->authorName,
+            'author' => $this->author_name,
         ];
     }
 }

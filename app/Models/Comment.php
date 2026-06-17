@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,8 +51,10 @@ class Comment extends Model
         return $this->hasMany(Comment::class, 'comment_id');
     }
 
-    public function authorName(): string
+    public function authorName(): Attribute
     {
-        return $this->user ? $this->user->name : 'Гость';
+        return Attribute::get(
+            fn () => $this->user ? $this->user->name : 'Гость',
+        );
     }
 }
