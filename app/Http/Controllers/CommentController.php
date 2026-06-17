@@ -28,10 +28,11 @@ class CommentController extends Controller
      */
     public function show(Film $film)
     {
-        $commentResource = new CommentResource($film->comments()
-            ->with('user:id,name')
-            ->orderBy('created_at', 'desc')
-            ->get());
+        $commentResource = CommentResource::collection(
+            $film->comments()
+                ->orderBy('created_at', 'desc')
+                ->get(),
+        );
 
         return new Success($commentResource);
     }

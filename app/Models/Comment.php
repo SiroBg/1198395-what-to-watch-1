@@ -49,4 +49,9 @@ class Comment extends Model
     {
         return $this->hasMany(Comment::class, 'comment_id');
     }
+
+    public function authorName(): string
+    {
+        return $this->user ? $this->user->name : 'Гость';
+    }
 }

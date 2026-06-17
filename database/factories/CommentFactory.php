@@ -27,4 +27,11 @@ class CommentFactory extends Factory
             'comment_id' => null,
         ];
     }
+
+    public function guest(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => null,
+        ]);
+    }
 }
