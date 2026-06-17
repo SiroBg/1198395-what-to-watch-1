@@ -39,30 +39,71 @@ class Film extends Model
             'run_time',
             'released',
             'imdb_id',
+            'status',
         ];
 
     public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class)->withTimestamps();
     }
 
     public function actors(): BelongsToMany
     {
-        return $this->belongsToMany(Actor::class);
+        return $this->belongsToMany(Actor::class)->withTimestamps();
     }
 
     public function directors(): BelongsToMany
     {
-        return $this->belongsToMany(Director::class);
+        return $this->belongsToMany(Director::class)->withTimestamps();
     }
 
     public function favoritedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id');
+        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id')->withTimestamps();
     }
 
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function scopeGenre($query, ?int $genreId)
+    {
+        return $genreId
+            ? $query->whereHas('genres', fn ($q) => $q->whereKey($genreId))
+            : $query;
+    }
+
+    public function scopeWithIsFavorite($query, ?int $userId)
+    {
+        if (!$userId) {
+            return $query->selectRaw('0 as is_favorite');
+        }
+
+        return $query->withExists(['favoritedBy as is_favorite' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }]);
+    }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        if (!$status) {
+            $status = FilmStatus::READY->value;
+        }
+
+        return $query->where('status', $status);
+    }
+
+    public function scopeWithRating($query)
+    {
+        return $query->withAvg('comments as rating', 'rating');
+    }
+
+    public function scopeSorting($query, string $field, string $direction)
+    {
+        if ($field === 'rating') {
+            $query->withRating();
+        }
+        return $query->orderBy($field, $direction);
     }
 }

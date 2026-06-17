@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum FilmStatus: string
 {
-    case Pending = 'pending';
-    case Moderation = 'moderation';
-    case Ready = 'ready';
+    case PENDING = 'pending';
+    case MODERATION = 'moderation';
+    case READY = 'ready';
 }

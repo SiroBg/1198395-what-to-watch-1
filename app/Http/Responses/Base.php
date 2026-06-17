@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class Base implements Responsable
 {
-    protected array $data;
+    protected mixed $data;
     protected int $statusCode;
 
     public function __construct(
-        array $data = [],
+        mixed $data = [],
         int $statusCode = Response::HTTP_OK,
     ) {
         $this->data = $data;
@@ -30,7 +30,7 @@ abstract class Base implements Responsable
             return $this->data->toArray();
         }
 
-        return $this->data;
+        return (array) $this->data;
     }
 
     abstract protected function makeResponseData(): ?array;
