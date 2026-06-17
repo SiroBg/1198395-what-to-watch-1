@@ -2,12 +2,14 @@
 
 namespace App\Http\Responses;
 
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class Success extends Base
 {
     public function __construct(
-        array|object $data = [],
+        mixed $data = [],
         int $statusCode = Response::HTTP_OK,
     ) {
         parent::__construct($data, $statusCode);
@@ -16,18 +18,20 @@ class Success extends Base
     protected function makeResponseData(): ?array
     {
         if ($this->data instanceof ResourceCollection) {
-            $paginatedData = $this->data->toResponse(request())->getData(true);
+            $resourceData = $this->data->toResponse(request())->getData(true);
+
+            $meta = $resourceData['meta'] ?? [];
+            $links = $resourceData['links'] ?? [];
 
             return array_merge(
-                ['data' => $paginatedData['data'] ?? []],
-                $paginatedData['links'] ?? null,
-                $paginatedData['meta'] ?? null,
+                ['data' => $resourceData['data'] ?? []],
+                $meta,
+                $links,
             );
         }
 
         if ($this->data instanceof JsonResource) {
             $resourceData = $this->data->toResponse(request())->getData(true);
-
             return [
                 'data' => $resourceData['data'] ?? $resourceData,
             ];

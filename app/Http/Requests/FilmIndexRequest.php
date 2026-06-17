@@ -30,10 +30,11 @@ class FilmIndexRequest extends FormRequest
         $validator->after(function (Validator $validator) {
 
             $status = $this->input('status');
+            $user = auth('sanctum')->user();
 
             if (
                 in_array($status, [FilmStatus::PENDING->value, FilmStatus::MODERATION->value])
-                && (!$this->user() || !$this->user()->hasRole('moderator'))
+                && (!$user || !$user->hasRole('moderator'))
             ) {
                 $validator->errors()->add(
                     'status',
