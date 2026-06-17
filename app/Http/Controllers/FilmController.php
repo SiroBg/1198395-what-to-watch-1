@@ -6,6 +6,7 @@ use App\Enums\FilmStatus;
 use App\Http\Requests\CreateFilmRequest;
 use App\Http\Requests\FilmIndexRequest;
 use App\Http\Requests\UpdateFilmRequest;
+use App\Http\Resources\FilmPreviewResource;
 use App\Http\Resources\FilmResource;
 use App\Http\Responses\Success;
 use App\Models\Actor;
@@ -24,13 +25,13 @@ class FilmController extends Controller
     {
         $validated = $request->validated();
 
-        $films = Film::query()->select('id', 'name', 'preview_image', 'preview_video_link')
+        $films = Film::query()
             ->genre($validated['genre'] ?? null)
             ->status($validated['status'] ?? null)
             ->sorting($validated['order_by'] ?? 'released', $validated['order_to'] ?? 'desc')
             ->paginate(8);
 
-        return new Success($films->toArray());
+        return new Success(FilmPreviewResource::collection($films));
     }
 
     /**
@@ -50,9 +51,9 @@ class FilmController extends Controller
      */
     public function show(Film $film)
     {
-        $film = $this->getFilmResource($film->id);
+        $filmResource = $this->getFilmResource($film->id);
 
-        return new Success($film->resole());
+        return new Success($filmResource);
     }
 
     /**
@@ -81,22 +82,24 @@ class FilmController extends Controller
     {
         $filmRandomGenreId = $film->genres()->inRandomOrder()->first()->id;
 
-        $films = Film::query()->select('id', 'name', 'preview_image', 'preview_video_link')
+        $films = Film::query()
             ->genre($filmRandomGenreId)
             ->status(FilmStatus::READY->value)
             ->sorting('released', 'desc')
             ->limit(4)->get();
 
-        return new Success($films->toArray());
+        $filmsResources = FilmPreviewResource::collection($films)->resolve();
+
+        return new Success($filmsResources);
     }
 
     public function promo()
     {
         $promo = Promo::firstOrFail();
 
-        $film = $this->getFilmResource($promo->film_id);
+        $filmResource = $this->getFilmResource($promo->film_id);
 
-        return new Success($film->resolve());
+        return new Success($filmResource);
     }
 
     public function setPromo(Film $film)
@@ -107,7 +110,9 @@ class FilmController extends Controller
             ['film_id' => $film->id],
         );
 
-        return new Success($this->getFilmResource($film->id)->resolve(), 201);
+        $filmResource = $this->getFilmResource($film->id);
+
+        return new Success($filmResource, 201);
     }
 
     private function createOrGetIds(array $arrayName, string $modelClass)
@@ -121,18 +126,14 @@ class FilmController extends Controller
 
     private function getFilmResource(int $filmId)
     {
-        $userId = auth()->id();
+        $userId = auth('sanctum')->id();
 
         $film = Film::query()
             ->withRating()
             ->withCount('comments as scores_count')
             ->with(['actors', 'directors', 'genres'])
             ->whereKey($filmId)
-            ->when($userId, function ($query) use ($userId) {
-                $query->withExists(['users as is_favorite' => function ($q) use ($userId) {
-                    $q->where('user_id', $userId);
-                }]);
-            })
+            ->withIsFavorite($userId)
             ->firstOrFail();
 
         return new FilmResource($film);

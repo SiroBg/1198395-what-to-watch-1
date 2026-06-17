@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class Base implements Responsable
 {
-    protected array $data;
+    protected array|object $data;
     protected int $statusCode;
 
     public function __construct(
-        array $data = [],
+        array|object $data = [],
         int $statusCode = Response::HTTP_OK,
     ) {
         $this->data = $data;

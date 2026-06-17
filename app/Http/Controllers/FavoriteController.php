@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FavoriteFilmsRequest;
+use App\Http\Resources\FilmPreviewResource;
 use App\Http\Responses\Success;
 use App\Models\Film;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,9 @@ class FavoriteController extends Controller
             ->orderByPivot('created_at', 'desc')
             ->paginate(8);
 
-        return new Success($films->toArray());
+        $filmsResources = FilmPreviewResource::collection($films);
+
+        return new Success($filmsResources);
     }
 
     /**

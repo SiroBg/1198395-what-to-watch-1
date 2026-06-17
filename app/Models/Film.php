@@ -74,6 +74,17 @@ class Film extends Model
             : $query;
     }
 
+    public function scopeWithIsFavorite($query, ?int $userId)
+    {
+        if (!$userId) {
+            return $query->selectRaw('0 as is_favorite');
+        }
+
+        return $query->withExists(['favoritedBy as is_favorite' => function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        }]);
+    }
+
     public function scopeStatus($query, ?string $status)
     {
         if (!$status) {

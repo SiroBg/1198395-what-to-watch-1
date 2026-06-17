@@ -24,7 +24,7 @@ class FilmResource extends JsonResource
             'video_link' => $this->video_link,
             'preview_video_link' => $this->preview_video_link,
             'description' => $this->description,
-            'rating' => $this->rating,
+            'rating' => number_format($this->rating, 1, '.', ''),
             'scores_count' => $this->scores_count,
             'directors' => $this->directors->pluck('name')->toArray(),
             'starring' => $this->actors->pluck('name')->toArray(),
