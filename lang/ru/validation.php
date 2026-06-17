@@ -13,6 +13,8 @@ return [
     'enum' => 'Выбранное значение для поля :attribute недействительно.',
     'regex' => 'Поле :attribute имеет неверный формат.',
     'array' => 'Поле :attribute должно быть массивом',
+    'required_without' => 'Поле :attribute обязательно, когда отсутствует :values.',
+    'prohibited_unless' => 'Поле :attribute запрещено, пока :other не имеет одно из значений: :values.',
 
     'min' => [
         'string' => ':attribute должен содержать минимум :min символов.',
