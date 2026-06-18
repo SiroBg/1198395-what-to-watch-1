@@ -14,3 +14,6 @@
 - `./vendor/bin/sail up -d` - запуск докер контейнеров;
 - `./vendor/bin/sail artisan migrate` - выполнение миграций;
 - `./vendor/bin/sail artisan db:seed` - заполнение бд случайными данными;
+
+# Запуск автотестов:
+* `./vendor/bin/sail artisan test`
