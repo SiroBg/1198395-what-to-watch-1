@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Responses\Success;
 use App\Models\Comment;
 use App\Models\Film;
@@ -27,10 +28,13 @@ class CommentController extends Controller
      */
     public function show(Film $film)
     {
-        return new Success(
+        $commentResource = CommentResource::collection(
             $film->comments()
-            ->with('user:id,name')->orderBy('created_at', 'desc')->get()->toArray(),
+                ->orderBy('created_at', 'desc')
+                ->get(),
         );
+
+        return new Success($commentResource);
     }
 
     /**
