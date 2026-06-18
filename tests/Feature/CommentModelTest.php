@@ -13,14 +13,15 @@ class CommentModelTest extends TestCase
 
     public function test_returns_the_registered_user_name_as_author()
     {
-        $user = User::factory()->create();
-        $user->name = 'Иван Иванов';
+        $user = User::factory(['name' => 'Иван Иванов'])->create();
 
-        $comment = Comment::factory()->create();
-        $comment->user_id = $user->id;
+        $comment = Comment::factory(['user_id' => $user->id])->create();
 
         $this->assertEquals('Иван Иванов', $comment->author_name);
+    }
 
+    public function test_returns_guest_if_comment_has_no_user_id()
+    {
         $guestComment = Comment::factory()->guest()->create();
         $this->assertEquals('Гость', $guestComment->author_name);
     }

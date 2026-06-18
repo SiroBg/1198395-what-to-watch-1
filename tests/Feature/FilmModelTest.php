@@ -19,7 +19,7 @@ class FilmModelTest extends TestCase
         Comment::factory()->create(['film_id' => $film->id, 'rating' => 4]);
         Comment::factory()->create(['film_id' => $film->id, 'rating' => 2]);
 
-        $calculatedRating = $film->rating;
+        $calculatedRating = $film->withRating()->first()->rating;
 
         $this->assertEquals(3.67, round($calculatedRating, 2));
     }
@@ -27,7 +27,8 @@ class FilmModelTest extends TestCase
     public function test_returns_zero_rating_if_there_are_no_comments()
     {
         $film = Film::factory()->create();
+        $calculatedRating = $film->withRating()->first()->rating;
 
-        $this->assertEquals(0.0, $film->rating);
+        $this->assertEquals(0.0, $calculatedRating);
     }
 }
