@@ -114,7 +114,7 @@ class FilmApiTest extends TestCase
 
         $moderatorResponse = $this->actingAs($moderator)->patchJson('/api/films/' . $film->id, $expectedData);
 
-        $moderatorResponse->assertStatus(201)->assertJson([
+        $moderatorResponse->assertStatus(200)->assertJson([
             'data' => $expectedData,
         ]);
     }
