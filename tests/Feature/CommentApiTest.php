@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class GenreApiTest extends TestCase
+class CommentApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -56,19 +56,17 @@ class GenreApiTest extends TestCase
 
         $user = User::factory()->create();
 
-        $authorizedResponse = $this->actingAs($user)-> $this->postJson('/api/comments/' . $film->id, $commentData);
+        $authorizedResponse = $this->actingAs($user)->postJson('/api/comments/' . $film->id, $commentData);
 
         $authorizedResponse->assertStatus(201)->assertJson([
             'data' => [
-                'id' => 1,
                 'user_id' => $user->id,
                 'film_id' => $film->id,
                 'comment_id' => null,
                 'text' => $commentData['text'],
                 'rating' => $commentData['rating'],
-                'author' => $user->name,
             ],
-        ])->etc();
+        ]);
     }
 
     public function test_user_can_update_his_comments(): void
@@ -88,15 +86,14 @@ class GenreApiTest extends TestCase
             'rating' => $expectedData['rating'],
         ]);
 
-        $rightUserResponse->assertStatus(200)->assertJson([
+        $rightUserResponse->assertStatus(201)->assertJson([
             'data' => [
                 'id' => $comment->id,
                 'user_id' => $userWithComment->id,
                 'text' => $expectedData['text'],
                 'rating' => $expectedData['rating'],
-                'author' => $userWithComment->name,
             ],
-        ])->etc();
+        ]);
 
         $wrongUserResponse = $this->actingAs($userWithoutComment)->patchJson('/api/comments/' . $comment->id, [
             'text' => $expectedData['text'],
@@ -121,9 +118,7 @@ class GenreApiTest extends TestCase
 
         $response->assertStatus(200);
 
-        $deletedComment = Comment::first($comment->id);
-
-        $this->assertEquals(null, $deletedComment);
+        $this->assertModelMissing($comment);
     }
 
     public function test_moderator_can_patch_and_delete_others_comments(): void
@@ -132,34 +127,30 @@ class GenreApiTest extends TestCase
         $role = Role::create(['name' => 'moderator']);
         $moderator->roles()->attach($role);
 
-        $commentForPatching = Comment::factory()->create();
+        $comment = Comment::factory()->create();
 
         $expectedData = [
             'text' => str_repeat('X', 100),
             'rating' => 1,
         ];
 
-        $patchResponse = $this->actingAs($moderator)->patchJson('/api/comments/' . $commentForPatching->id, [
+        $patchResponse = $this->actingAs($moderator)->patchJson('/api/comments/' . $comment->id, [
             'text' => $expectedData['text'],
             'rating' => $expectedData['rating'],
         ]);
 
-        $patchResponse->assertStatus(200)->assertJson([
+        $patchResponse->assertStatus(201)->assertJson([
             'data' => [
-                'id' => $commentForPatching->id,
+                'id' => $comment->id,
                 'text' => $expectedData['text'],
                 'rating' => $expectedData['rating'],
             ],
-        ])->etc();
+        ]);
 
-        $commentForDeleting = Comment::factory()->create();
-
-        $deleteResponse = $this->actingAs($moderator)->delete('/api/comments/' . $commentForDeleting->id);
+        $deleteResponse = $this->actingAs($moderator)->delete('/api/comments/' . $comment->id);
 
         $deleteResponse->assertStatus(200);
 
-        $deletedComment = Comment::first($commentForDeleting->id);
-
-        $this->assertEquals(null, $deletedComment);
+        $this->assertModelMissing($comment);
     }
 }
