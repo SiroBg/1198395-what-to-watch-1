@@ -13,7 +13,9 @@ class AuthController extends Controller
 {
     public function register(RegisterUserRequest $request)
     {
-        $role = Role::where('name', 'user')->firstOrCreate();
+        $role = Role::firstOrCreate([
+            'name' => 'user',
+        ]);
 
         $params = $request->safe()->except('file');
 
