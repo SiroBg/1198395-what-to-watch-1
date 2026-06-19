@@ -35,7 +35,7 @@ class ProcessFilmImport implements ShouldQueue
     /**
      * Выполнить задачу.
      */
-    public function execute(FilmsRepositoryInterface $filmRepository, SaveFilmAction $saveFilmAction): void
+    public function handle(FilmsRepositoryInterface $filmRepository, SaveFilmAction $saveFilmAction): void
     {
         $externalData = $filmRepository->getFilmByImdbId($this->imdbId);
 
