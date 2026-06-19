@@ -2,36 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\RegisterUserAction;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
-use App\Models\Role;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(RegisterUserRequest $request)
+    public function register(RegisterUserRequest $request, RegisterUserAction $action): Success
     {
-        $role = Role::firstOrCreate([
-            'name' => 'user',
-        ]);
-
-        $params = $request->safe()->except('file');
-
-        $user = User::create($params);
-
-        $user->roles()->attach($role->id);
-
-        $token = $user->createToken('auth-token');
+        $result = $action->execute($request->safe()->except('file'));
 
         return new Success([
-            'user' => $user,
-            'token' => $token->plainTextToken,
+            'user' => new UserResource($result['user']),
+            'token' => $result['token'],
         ], 201);
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): Success
     {
         if (!Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
@@ -42,9 +32,9 @@ class AuthController extends Controller
         return new Success(['token' => $token->plainTextToken]);
     }
 
-    public function logout()
+    public function logout(): Success
     {
-        Auth::user()->tokens()->delete();
+        Auth::user()->currentAccessToken()?->delete();
 
         return new Success(['message' => 'Logged out']);
     }

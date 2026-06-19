@@ -2,34 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\FilmStatus;
+use App\Actions\SaveFilmAction;
 use App\Http\Requests\CreateFilmRequest;
 use App\Http\Requests\FilmIndexRequest;
 use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Resources\FilmPreviewResource;
-use App\Http\Resources\FilmResource;
 use App\Http\Responses\Success;
-use App\Models\Actor;
-use App\Models\Director;
 use App\Models\Film;
-use App\Models\Genre;
 use App\Models\Promo;
-use Illuminate\Support\Arr;
+use App\Queries\FetchFilmsQuery;
+use App\Queries\GetFilmWithMetadataQuery;
+use App\Queries\GetSimilarFilmsQuery;
 
 class FilmController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(FilmIndexRequest $request)
+    public function index(FilmIndexRequest $request, FetchFilmsQuery $query)
     {
-        $validated = $request->validated();
-
-        $films = Film::query()
-            ->genre($validated['genre'] ?? null)
-            ->status($validated['status'] ?? null)
-            ->sorting($validated['order_by'] ?? 'released', $validated['order_to'] ?? 'desc')
-            ->paginate(8);
+        $films = $query->execute($request->validated());
 
         return new Success(FilmPreviewResource::collection($films));
     }
@@ -49,9 +41,11 @@ class FilmController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Film $film)
+    public function show(Film $film, GetFilmWithMetadataQuery $query)
     {
-        $filmResource = $this->getFilmResource($film->id);
+        $userId = auth('sanctum')->id();
+
+        $filmResource = $query->execute($film->id, $userId);
 
         return new Success($filmResource);
     }
@@ -59,83 +53,40 @@ class FilmController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFilmRequest $request, Film $film)
+    public function update(UpdateFilmRequest $request, Film $film, SaveFilmAction $action)
     {
-        $validated = $request->validated();
-
-        $actorIds = $this->createOrGetIds($validated['starring'] ?? [], Actor::class);
-        $directorIds = $this->createOrGetIds($validated['directors'] ?? [], Director::class);
-        $genreIds = $this->createOrGetIds($validated['genre'] ?? [], Genre::class);
-
-        $film->update(Arr::except($validated, ['starring', 'directors', 'genre']));
-
-        $film->actors()->sync($actorIds);
-        $film->directors()->sync($directorIds);
-        $film->genres()->sync($genreIds);
+        $film = $request->save($film, $action);
 
         $film->load(['actors', 'directors', 'genres']);
 
         return new Success($film->toArray());
     }
 
-    public function similar(Film $film)
+    public function similar(Film $film, GetSimilarFilmsQuery $query)
     {
-        $filmRandomGenreId = $film->genres()->inRandomOrder()->first()->id;
+        $films = $query->execute($film);
 
-        $films = Film::query()
-            ->genre($filmRandomGenreId)
-            ->status(FilmStatus::READY->value)
-            ->sorting('released', 'desc')
-            ->limit(4)->get();
-
-        $filmsResources = FilmPreviewResource::collection($films)->resolve();
-
-        return new Success($filmsResources);
+        return new Success($films);
     }
 
-    public function promo()
+    public function promo(GetFilmWithMetadataQuery $query)
     {
         $promo = Promo::firstOrFail();
+        $userId = auth('sanctum')->id();
 
-        $filmResource = $this->getFilmResource($promo->film_id);
+        $filmResource = $query->execute($promo->film_id, $userId);
 
         return new Success($filmResource);
     }
 
-    public function setPromo(Film $film)
+    public function setPromo(Film $film, GetFilmWithMetadataQuery $query)
     {
         Promo::truncate();
 
-        Promo::create(
+        $promo = Promo::create(
             ['film_id' => $film->id],
         );
 
-        $filmResource = $this->getFilmResource($film->id);
-
-        return new Success($filmResource, 201);
-    }
-
-    private function createOrGetIds(array $arrayName, string $modelClass)
-    {
-        return collect($arrayName)
-            ->map(
-                fn ($value) =>
-                $modelClass::firstOrCreate(['name' => $value])->id,
-            );
-    }
-
-    private function getFilmResource(int $filmId)
-    {
-        $userId = auth('sanctum')->id();
-
-        $film = Film::query()
-            ->withRating()
-            ->withCount('comments as scores_count')
-            ->with(['actors', 'directors', 'genres'])
-            ->whereKey($filmId)
-            ->withIsFavorite($userId)
-            ->firstOrFail();
-
-        return new FilmResource($film);
+        return new Success($promo, 201);
     }
 }
