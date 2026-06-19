@@ -8,6 +8,7 @@ use App\Http\Requests\FilmIndexRequest;
 use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Resources\FilmPreviewResource;
 use App\Http\Responses\Success;
+use App\Jobs\ProcessFilmImport;
 use App\Models\Film;
 use App\Models\Promo;
 use App\Queries\FetchFilmsQuery;
@@ -34,6 +35,8 @@ class FilmController extends Controller
         $film = Film::create([
             'imdb_id' => $request['imdb_id'],
         ]);
+
+        ProcessFilmImport::dispatch($request['imdb_id']);
 
         return new Success($film->toArray(), 201);
     }
@@ -79,7 +82,7 @@ class FilmController extends Controller
         return new Success($filmResource);
     }
 
-    public function setPromo(Film $film, GetFilmWithMetadataQuery $query)
+    public function setPromo(Film $film)
     {
         Promo::truncate();
 
