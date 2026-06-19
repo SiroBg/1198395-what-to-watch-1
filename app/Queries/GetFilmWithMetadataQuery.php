@@ -8,6 +8,7 @@ class GetFilmWithMetadataQuery
 {
     /**
      * Получить фильм со всеми агрегатами, связями и флагом "избранное" для пользователя.
+     * @param int $filmId
      */
     public function execute(int $filmId, ?int $userId = null): Film
     {
