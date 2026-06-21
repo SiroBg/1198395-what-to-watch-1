@@ -1,34 +1,27 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Comment;
 use App\Models\Film;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class FilmModelTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_calculates_the_correct_average_rating_based_on_comments()
-    {
-        $film = Film::factory()->create();
+test('считает правильный рейтинг фильма', function () {
+    $film = Film::factory()->create();
 
-        Comment::factory()->create(['film_id' => $film->id, 'rating' => 5]);
-        Comment::factory()->create(['film_id' => $film->id, 'rating' => 4]);
-        Comment::factory()->create(['film_id' => $film->id, 'rating' => 2]);
+    Comment::factory()->create(['film_id' => $film->id, 'rating' => 5]);
+    Comment::factory()->create(['film_id' => $film->id, 'rating' => 4]);
+    Comment::factory()->create(['film_id' => $film->id, 'rating' => 2]);
 
-        $calculatedRating = $film->withRating()->first()->rating;
+    $calculatedRating = $film->withRating()->first()->rating;
 
-        $this->assertEquals(3.67, round($calculatedRating, 2));
-    }
+    expect(round($calculatedRating, 2))->toBe(3.67);
+});
 
-    public function test_returns_zero_rating_if_there_are_no_comments()
-    {
-        $film = Film::factory()->create();
-        $calculatedRating = $film->withRating()->first()->rating;
+test('возвращает нулевой рейтинг для фильма без отзывов', function () {
+    $film = Film::factory()->create();
 
-        $this->assertEquals(0.0, $calculatedRating);
-    }
-}
+    $calculatedRating = $film->withRating()->first()->rating;
+
+    expect((float) $calculatedRating)->toBe(0.0);
+});

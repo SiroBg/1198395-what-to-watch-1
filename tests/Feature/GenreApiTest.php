@@ -1,63 +1,59 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Genre;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class GenreApiTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_returns_all_genres_with_200_response(): void
-    {
-        Genre::factory()->count(3)->create();
+dataset('genre_access_matrix', [
+    'неавторизованный гость получает 401' => [
+        'user'   => fn () => null,
+        'status' => 401
+    ],
+    'обычный пользователь получает 403' => [
+        'user'   => fn () => User::factory()->create(),
+        'status' => 403
+    ],
+    'модератор успешно обновляет жанр' => [
+        'user'   => function () {
+            $moderator = User::factory()->create();
+            $role = Role::firstOrCreate(['name' => 'moderator']);
+            $moderator->roles()->attach($role);
+            return $moderator;
+        },
+        'status' => null
+    ],
+]);
 
-        $response = $this->getJson('/api/genres');
+test('возвращает правильную структуру данных', function () {
+    Genre::factory()->count(3)->create();
 
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                         '*' => ['id', 'name'],
-                     ],
-                 ]);
+    $response = $this->getJson('/api/genres');
+
+    expect($response)
+        ->assertOk()
+        ->assertJsonStructure([
+             'data' => [
+                 '*' => ['id', 'name'],
+             ],
+        ]);
+});
+
+test('проверка доступа к редактированию жанра', function (Closure $user, ?int $status) {
+    $genre = Genre::factory()->create(['name' => 'Комедия']);
+    $resolvedUser = $user();
+
+    $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
+    $response = $request->patchJson('/api/genres/' . $genre->id, ['name' => 'Ужасы']);
+
+    if ($status) {
+        expect($response)->assertStatus($status);
+    } else {
+        expect($response)->assertOk();
+        expect($response->json('data'))
+            ->id->toBe($genre->id)
+            ->name->toBe('Ужасы');
     }
-
-    public function test_user_without_moderator_role_cant_patch_genre(): void
-    {
-        $genre = Genre::factory()->create(['name' => 'Комедия']);
-
-        $unauthorizedResponse = $this->patchJson('/api/genres/' . $genre->id, ['name' => 'Ужасы']);
-
-        $unauthorizedResponse->assertStatus(401);
-
-        $user = User::factory()->create();
-
-        $notModeratorResponse = $this->actingAs($user)->patchJson('/api/genres/' . $genre->id, ['name' => 'Ужасы']);
-
-        $notModeratorResponse->assertStatus(403);
-    }
-
-    public function test_moderator_can_patch_genres(): void
-    {
-        $genre = Genre::factory()->create(['name' => 'Комедия']);
-
-        $user = User::factory()->create();
-        $role = Role::create(['name' => 'moderator']);
-
-        $user->roles()->attach($role);
-
-        $response = $this->actingAs($user)->patchJson('/api/genres/' . $genre->id, ['name' => 'Ужасы']);
-
-        $response->assertStatus(200)->assertJson([
-                     'data' => [
-                         'id' => $genre->id,
-                         'name' => 'Ужасы',
-                     ],
-                 ]);
-        ;
-    }
-}
+})->with('genre_access_matrix');
