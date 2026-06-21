@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Services\OmdbDataConverter;
 
 class ProcessFilmImport implements ShouldQueue
 {
@@ -35,7 +36,7 @@ class ProcessFilmImport implements ShouldQueue
     /**
      * Выполнить задачу.
      */
-    public function handle(FilmsRepositoryInterface $filmRepository, SaveFilmAction $saveFilmAction): void
+    public function handle(FilmsRepositoryInterface $filmRepository, SaveFilmAction $saveFilmAction, OmdbDataConverter $converter): void
     {
         $externalData = $filmRepository->getFilmByImdbId($this->imdbId);
 
@@ -44,9 +45,11 @@ class ProcessFilmImport implements ShouldQueue
             return;
         }
 
+        $convertedData = $converter->convert($externalData);
+
         $film = Film::firstOrNew(['imdb_id' => $this->imdbId]);
 
-        $saveFilmAction->execute($film, $externalData);
+        $saveFilmAction->execute($film, $convertedData);
 
         Log::info("Фильм с IMDb ID {$this->imdbId} успешно импортирован/обновлен в БД.");
     }

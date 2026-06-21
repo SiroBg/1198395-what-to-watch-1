@@ -1,27 +1,23 @@
 <?php
 
-namespace App\Services\Converters;
+namespace App\Services;
 
 use Illuminate\Support\Str;
 
 class OmdbDataConverter
 {
-    /**
-     * Трансформирует формат OMDb под формат вашей БД.
-     */
     public function convert(array $omdbData): array
     {
         return [
-            'title' => $omdbData['Title'] ?? null,
+            'name' => $omdbData['Title'] ?? null,
             'description' => $omdbData['Plot'] ?? null,
-            'releasedDate' => $this->parseReleaseYear($omdbData['Released'] ?? $omdbData['Year'] ?? null),
-            'poster' => $omdbData['Poster'] ?? null,
-            'rating' => $omdbData['imdbRating'] ?? null,
+            'released' => $this->parseReleaseYear($omdbData['Released'] ?? $omdbData['Year'] ?? null),
+            'poster_image' => $omdbData['Poster'] ?? null,
 
-            // Превращаем строки через запятую в чистые массивы
             'starring' => $this->parseOmdbString($omdbData['Actors'] ?? ''),
             'directors' => $this->parseOmdbString($omdbData['Director'] ?? ''),
-            'genre' => $this->parseOmdbString($omdbData['Genre'] ?? ''),
+            'genres' => $this->parseOmdbString($omdbData['Genre'] ?? ''),
+            'run_time' => $this->parseRuntime($omdbData['Runtime'] ?? null),
         ];
     }
 
@@ -48,5 +44,10 @@ class OmdbDataConverter
             }
             return null;
         }
+    }
+
+    private function parseRuntime(?string $runtime): ?int
+    {
+        return (int) Str::before($runtime, ' ');
     }
 }
