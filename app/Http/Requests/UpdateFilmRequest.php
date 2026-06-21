@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Actions\SaveFilmAction;
 use App\Enums\FilmStatus;
 use App\Models\Film;
 use Illuminate\Foundation\Http\FormRequest;
@@ -38,5 +39,10 @@ class UpdateFilmRequest extends FormRequest
             'imdb_id' => ['required', 'regex:/^tt\d+$/', Rule::unique(Film::class, 'imdb_id')->ignore($filmId)],
             'status' => ['required', Rule::enum(FilmStatus::class)],
         ];
+    }
+
+    public function save(Film $film, SaveFilmAction $saveFilmAction): Film
+    {
+        return $saveFilmAction->execute($film, $this->validated());
     }
 }

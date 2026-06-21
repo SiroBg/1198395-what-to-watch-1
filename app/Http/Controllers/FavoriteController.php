@@ -6,6 +6,7 @@ use App\Http\Requests\FavoriteFilmsRequest;
 use App\Http\Resources\FilmPreviewResource;
 use App\Http\Responses\Success;
 use App\Models\Film;
+use App\Queries\FetchFilmsQuery;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
@@ -13,15 +14,16 @@ class FavoriteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(FavoriteFilmsRequest $request)
+    public function index(FavoriteFilmsRequest $request, FetchFilmsQuery $query)
     {
         $validated = $request->validated();
 
-        $films = $request->user()
-            ->favoriteFilms()
-            ->genre($validated['genre'] ?? null)
-            ->orderByPivot('created_at', 'desc')
-            ->paginate(8);
+        $filters = array_merge([
+            'order_by' => 'pivot_created_at',
+            'order_to' => 'desc',
+        ], $validated);
+
+        $films = $query->execute($filters, $request->user()->favoriteFilms());
 
         $filmsResources = FilmPreviewResource::collection($films);
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UpdateUserAction;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,37 +17,22 @@ class UserController extends Controller
     {
         $user = Auth::user()->load('roles');
 
-        return new Success([
-            'name' => $user->name,
-            'email' => $user->email,
-            'file' => $user->file,
-            'role' => $user->roles->first()?->name,
-        ]);
+        return new Success(new UserResource($user));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request)
+    public function update(UpdateUserRequest $request, UpdateUserAction $action)
     {
         $user = Auth::user()->load('roles');
 
-        $params = $request->safe()->except('file');
+        $updatedUser = $action->execute(
+            $user,
+            $request->safe()->except('file'),
+            $request->file('file'),
+        );
 
-        if ($request->hasFile('file')) {
-            $params['file'] = $request
-                ->file('file')
-                ->store('avatars', 'public');
-        }
-
-        $user->update($params);
-
-        return new Success([
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'file' => $user->file,
-            'role' => $user->roles->first()?->name,
-        ]);
+        return new Success(new UserResource($updatedUser));
     }
 }

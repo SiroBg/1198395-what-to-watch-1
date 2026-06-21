@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\DeleteCommentAction;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Responses\Success;
 use App\Models\Comment;
 use App\Models\Film;
+use App\Queries\GetFilmCommentsQuery;
 
 class CommentController extends Controller
 {
@@ -21,50 +23,38 @@ class CommentController extends Controller
             'comment_id' => $request->comment_id,
         ]);
 
-        return new Success($comment->toArray(), 201);
+        return new Success(new CommentResource($comment), 201);
     }
     /**
      * Display the specified resource.
      */
-    public function show(Film $film)
+    public function show(Film $film, GetFilmCommentsQuery $query): Success
     {
-        $commentResource = CommentResource::collection(
-            $film->comments()
-                ->orderBy('created_at', 'desc')
-                ->get(),
-        );
+        $comments = $query->execute($film);
 
-        return new Success($commentResource);
+        return new Success(CommentResource::collection($comments));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCommentRequest $request, Comment $comment)
+    public function update(UpdateCommentRequest $request, Comment $comment): Success
     {
         $this->authorize('update', $comment);
 
         $comment->update([
             'text' => $request->text,
-
-            'rating' => $comment->comment_id
-                ? null
-                : $request->rating,
+            'rating' => $comment->comment_id ? null : $request->rating,
         ]);
 
-        return new Success($comment->toArray(), 201);
+        return new Success(new CommentResource($comment), 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Comment $comment)
+    public function destroy(Comment $comment, DeleteCommentAction $action): Success
     {
         $this->authorize('delete', $comment);
 
-        $comment->replies()->delete();
-
-        $comment->delete();
+        $action->execute($comment);
 
         return new Success(['message' => 'Комментарий удалён.']);
     }
