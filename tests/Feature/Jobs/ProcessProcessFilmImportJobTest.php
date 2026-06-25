@@ -1,8 +1,7 @@
 <?php
 
-use App\Jobs\ProcessFilmImport;
+use App\Jobs\ProcessFilmImportJob;
 use App\Models\Genre;
-use App\Models\Film;
 use App\Repositories\FilmsRepositories\FilmsRepositoryInterface;
 use Illuminate\Support\Facades\Queue;
 
@@ -17,7 +16,7 @@ test('задача успешно парсит данные о фильме, с�
         'Year' => '2017',
         'Runtime' => '136 min',
         'imdbID' => $imdbId,
-        'Response' => 'True'
+        'Response' => 'True',
     ];
 
     $repositoryMock = mock(FilmsRepositoryInterface::class);
@@ -28,7 +27,7 @@ test('задача успешно парсит данные о фильме, с�
 
     $this->app->instance(FilmsRepositoryInterface::class, $repositoryMock);
 
-    $job = new ProcessFilmImport($imdbId);
+    $job = new ProcessFilmImportJob($imdbId);
     app()->call([$job, 'handle']);
 
     $this->assertDatabaseHas('films', [

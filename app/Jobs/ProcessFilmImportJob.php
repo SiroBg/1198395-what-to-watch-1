@@ -3,27 +3,23 @@
 namespace App\Jobs;
 
 use App\Actions\SaveFilmAction;
+use App\Enums\FilmStatus;
 use App\Models\Film;
 use App\Repositories\FilmsRepositories\FilmsRepositoryInterface;
+use App\Services\OmdbDataConverter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use App\Services\OmdbDataConverter;
 
-class ProcessFilmImport implements ShouldQueue
+class ProcessFilmImportJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-
-    /**
-     * Количество попыток выполнения задачи при сбое (например, если API временно недоступно)
-     */
-    public $tries = 3;
 
     /**
      * Создать новый экземпляр задачи.
@@ -40,14 +36,10 @@ class ProcessFilmImport implements ShouldQueue
     {
         $externalData = $filmRepository->getFilmByImdbId($this->imdbId);
 
-        if (!$externalData) {
-            Log::warning("Фильм с IMDb ID {$this->imdbId} не найден во внешнем сервисе.");
-            return;
-        }
-
         $convertedData = $converter->convert($externalData);
 
         $film = Film::firstOrNew(['imdb_id' => $this->imdbId]);
+        $film->status = FilmStatus::MODERATION;
 
         $saveFilmAction->execute($film, $convertedData);
 
