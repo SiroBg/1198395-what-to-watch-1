@@ -4,26 +4,27 @@ use App\Models\Film;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
 
 dataset('film_access_matrix', [
     'неавторизованный гость получает 401' => [
-        'user'   => fn () => null,
-        'status' => 401
+        'user' => fn () => null,
+        'status' => 401,
     ],
     'обычный пользователь получает 403' => [
-        'user'   => fn () => User::factory()->create(),
-        'status' => 403
+        'user' => fn () => User::factory()->create(),
+        'status' => 403,
     ],
     'модератор успешно проходит проверку' => [
-        'user'   => function () {
+        'user' => function () {
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);
             return $moderator;
         },
-        'status' => null
+        'status' => null,
     ],
 ]);
 
@@ -57,6 +58,7 @@ test('возвращает правильную структуру для одн
 });
 
 test('проверка доступа к созданию фильма', function (Closure $user, ?int $status) {
+    Queue::fake();
     $imdbId = 'tt1234567';
     $resolvedUser = $user();
 
@@ -70,7 +72,6 @@ test('проверка доступа к созданию фильма', functio
         expect($response->json('data'))->imdb_id->toBe($imdbId);
     }
 })->with('film_access_matrix');
-
 
 test('проверка доступа к редактированию фильма', function (Closure $user, ?int $status) {
     $film = Film::factory()->create();
