@@ -17,6 +17,7 @@ class CommentFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function definition(): array
     {
         return [
@@ -28,9 +29,12 @@ class CommentFactory extends Factory
         ];
     }
 
+    /**
+     * @psalm-api
+     */
     public function guest(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $_attributes) => [
             'user_id' => null,
         ]);
     }

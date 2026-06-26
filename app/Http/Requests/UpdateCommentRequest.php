@@ -28,6 +28,7 @@ class UpdateCommentRequest extends FormRequest
     {
         $validator->after(function ($validator) {
 
+            /** @var \App\Models\Comment|null $comment */
             $comment = $this->route('comment');
 
             if ($comment->comment_id && $this->filled('rating')) {

@@ -5,6 +5,9 @@ namespace App\Policies;
 use App\Models\Comment;
 use App\Models\User;
 
+/**
+ * @psalm-api
+ */
 class CommentPolicy
 {
     public function before(User $user): ?bool

@@ -12,26 +12,30 @@ class FilmResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\Film $film */
+        $film = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'poster_image' => $this->poster_image,
-            'preview_image' => $this->preview_image,
-            'background_image' => $this->background_image,
-            'background_color' => $this->background_color,
-            'video_link' => $this->video_link,
-            'preview_video_link' => $this->preview_video_link,
-            'description' => $this->description,
-            'rating' => round($this->rating, 1),
-            'scores_count' => $this->scores_count,
-            'directors' => $this->directors->pluck('name')->toArray(),
-            'starring' => $this->actors->pluck('name')->toArray(),
-            'run_time' => $this->run_time,
-            'genres' => $this->genres->pluck('name')->toArray(),
-            'released' => $this->released,
-            'is_favorite' => (bool) ($this->is_favorite ?? false),
+            'id' => $film->id,
+            'name' => $film->name,
+            'poster_image' => $film->poster_image,
+            'preview_image' => $film->preview_image,
+            'background_image' => $film->background_image,
+            'background_color' => $film->background_color,
+            'video_link' => $film->video_link,
+            'preview_video_link' => $film->preview_video_link,
+            'description' => $film->description,
+            'rating' => round($film->rating ?? 0.0, 1),
+            'scores_count' => $film->scores_count,
+            'directors' => $film->directors->pluck('name')->toArray(),
+            'starring' => $film->actors->pluck('name')->toArray(),
+            'run_time' => $film->run_time,
+            'genres' => $film->genres->pluck('name')->toArray(),
+            'released' => $film->released,
+            'is_favorite' => (bool) ($film->is_favorite ?? false),
         ];
     }
 }

@@ -15,6 +15,7 @@ class Success extends Base
         parent::__construct($data, $statusCode);
     }
 
+    #[\Override]
     protected function makeResponseData(): ?array
     {
         if ($this->data instanceof ResourceCollection) {

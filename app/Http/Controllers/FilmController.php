@@ -15,6 +15,9 @@ use App\Queries\FetchFilmsQuery;
 use App\Queries\GetFilmWithMetadataQuery;
 use App\Queries\GetSimilarFilmsQuery;
 
+/**
+ * @psalm-api
+ */
 class FilmController extends Controller
 {
     /**

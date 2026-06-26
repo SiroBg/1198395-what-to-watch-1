@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Director>
+ * @psalm-api
  */
 class DirectorFactory extends Factory
 {
@@ -15,6 +16,7 @@ class DirectorFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function definition(): array
     {
         return [

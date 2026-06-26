@@ -19,6 +19,7 @@ abstract class Base implements Responsable
         $this->statusCode = $statusCode;
     }
 
+    #[\Override]
     public function toResponse($request)
     {
         return response()->json($this->makeResponseData(), $this->statusCode);

@@ -11,6 +11,9 @@ use App\Models\Comment;
 use App\Models\Film;
 use App\Queries\GetFilmCommentsQuery;
 
+/**
+ * @psalm-api
+ */
 class CommentController extends Controller
 {
     public function store(CreateCommentRequest $request, Film $film)
@@ -18,9 +21,9 @@ class CommentController extends Controller
         $comment = Comment::create([
             'film_id' => $film->id,
             'user_id' => $request->user()->id,
-            'text' => $request->text,
-            'rating' => $request->rating,
-            'comment_id' => $request->comment_id,
+            'text' => $request->safe()->text,
+            'rating' => $request->safe()->rating,
+            'comment_id' => $request->safe()->comment_id,
         ]);
 
         return new Success(new CommentResource($comment), 201);
@@ -43,8 +46,8 @@ class CommentController extends Controller
         $this->authorize('update', $comment);
 
         $comment->update([
-            'text' => $request->text,
-            'rating' => $comment->comment_id ? null : $request->rating,
+            'text' => $request->safe()->text,
+            'rating' => $comment->comment_id ? null : $request->safe()->rating,
         ]);
 
         return new Success(new CommentResource($comment), 201);

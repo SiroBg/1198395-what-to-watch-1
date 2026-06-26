@@ -9,6 +9,9 @@ use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @psalm-api
+ */
 class AuthController extends Controller
 {
     public function register(RegisterUserRequest $request, RegisterUserAction $action): Success
@@ -34,7 +37,15 @@ class AuthController extends Controller
 
     public function logout(): Success
     {
-        Auth::user()->currentAccessToken()?->delete();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
+        $token = $user->currentAccessToken();
+
+        if ($token) {
+            $token->delete();
+        }
 
         return new Success(['message' => 'Logged out']);
     }

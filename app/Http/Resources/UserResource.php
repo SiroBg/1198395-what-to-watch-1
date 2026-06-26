@@ -7,14 +7,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'file' => $this->file,
-            'role' => $this->roles->first()?->name,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'file' => $user->file,
+            'role' => $user->roles->first()?->name,
         ];
     }
 }

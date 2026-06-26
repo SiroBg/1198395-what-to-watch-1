@@ -12,13 +12,17 @@ class FilmPreviewResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\Film $film */
+        $film = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'preview_image' => $this->preview_image,
-            'preview_video_link' => $this->preview_video_link,
+            'id' => $film->id,
+            'name' => $film->name,
+            'preview_image' => $film->preview_image,
+            'preview_video_link' => $film->preview_video_link,
         ];
     }
 }

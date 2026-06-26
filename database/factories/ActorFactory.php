@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Actor>
+ * @psalm-api
  */
 class ActorFactory extends Factory
 {
@@ -15,6 +16,7 @@ class ActorFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function definition(): array
     {
         return [

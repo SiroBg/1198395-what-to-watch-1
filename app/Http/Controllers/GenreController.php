@@ -6,6 +6,9 @@ use App\Http\Requests\UpdateGenreRequest;
 use App\Http\Responses\Success;
 use App\Models\Genre;
 
+/**
+ * @psalm-api
+ */
 class GenreController extends Controller
 {
     /**

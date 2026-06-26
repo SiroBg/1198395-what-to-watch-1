@@ -8,6 +8,9 @@ use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @psalm-api
+ */
 class UserController extends Controller
 {
     /**

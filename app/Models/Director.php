@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @psalm-api
+ */
 class Director extends Model
 {
     /** @use HasFactory<\Database\Factories\DirectorFactory> */

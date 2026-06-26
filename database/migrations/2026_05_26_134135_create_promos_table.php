@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->timestamps();
-            $table->foreignId('film_id')->primary()->constrained();
+            $table->foreignId('film_id')->primary()->constrained('films');
         });
     }
 

@@ -51,22 +51,25 @@ class CreateCommentRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->comment_id) {
-                $comment = \App\Models\Comment::find($this->comment_id);
+            $commentId = $this->input('comment_id');
+            if ($commentId) {
+                $comment = \App\Models\Comment::find($commentId);
 
                 if (!$comment) {
                     $validator->errors()->add('comment_id', 'Комментарий не найден.');
                     return;
                 }
 
-                if ($comment->film_id != $this->route('film')->id) {
+                /** @var \App\Models\Film|null $film */
+                $film = $this->route('film');
+
+                if ($comment->film_id !== $film->id) {
                     $validator->errors()->add(
                         'comment_id',
                         'Комментарий принадлежит другому фильму.',
                     );
                 }
             }
-
         });
     }
 }

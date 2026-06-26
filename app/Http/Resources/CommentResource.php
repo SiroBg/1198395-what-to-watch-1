@@ -12,18 +12,22 @@ class CommentResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var \App\Models\Comment $comment */
+        $comment = $this->resource;
+
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'film_id' => $this->film_id,
-            'comment_id' => $this->comment_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'text' => $this->text,
-            'rating' => $this->rating,
-            'author' => $this->author_name,
+            'id' => $comment->id,
+            'user_id' => $comment->user_id,
+            'film_id' => $comment->film_id,
+            'comment_id' => $comment->comment_id,
+            'created_at' => $comment->created_at,
+            'updated_at' => $comment->updated_at,
+            'text' => $comment->text,
+            'rating' => $comment->rating,
+            'author' => $comment->author_name,
         ];
     }
 }

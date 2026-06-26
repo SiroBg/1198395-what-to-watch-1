@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @psalm-api
+ * @property int $id
+ * @property string $text
+ * @property string $author_name
+ *
+ * @property-read \App\Models\User|null $user
+ */
 class Comment extends Model
 {
     /** @use HasFactory<\Database\Factories\CommentFactory> */

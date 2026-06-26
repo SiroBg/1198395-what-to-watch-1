@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @psalm-api
+ */
 class Promo extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoleFactory> */
-    use HasFactory;
-
     protected $hidden =
         [
             'created_at',

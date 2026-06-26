@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @psalm-api
+ */
 class Actor extends Model
 {
     /** @use HasFactory<\Database\Factories\ActorFactory> */

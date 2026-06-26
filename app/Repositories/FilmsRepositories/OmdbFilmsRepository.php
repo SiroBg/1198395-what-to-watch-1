@@ -15,6 +15,7 @@ class OmdbFilmsRepository implements FilmsRepositoryInterface
     ) {
     }
 
+    #[\Override]
     public function getFilmByImdbId(string $imdbId): array
     {
         $url = 'https://www.omdbapi.com/?apikey=' . $this->apiKey . '&i=' . $imdbId;

@@ -5,6 +5,9 @@ namespace App\Http\Responses;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+/**
+ * @psalm-api
+ */
 class Fail extends Base
 {
     protected string $message;
@@ -38,6 +41,7 @@ class Fail extends Base
         return new self($e, $status, $errors);
     }
 
+    #[\Override]
     protected function makeResponseData(): ?array
     {
         $response['message'] = $this->message;

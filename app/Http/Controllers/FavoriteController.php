@@ -9,6 +9,9 @@ use App\Models\Film;
 use App\Queries\FetchFilmsQuery;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @psalm-api
+ */
 class FavoriteController extends Controller
 {
     /**
@@ -23,7 +26,7 @@ class FavoriteController extends Controller
             'order_to' => 'desc',
         ], $validated);
 
-        $films = $query->execute($filters, $request->user()->favoriteFilms());
+        $films = $query->execute($filters, $request->user()->favoriteFilms()->getQuery());
 
         $filmsResources = FilmPreviewResource::collection($films);
 

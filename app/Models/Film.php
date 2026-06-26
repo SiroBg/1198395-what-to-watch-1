@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @psalm-api
+ *
+ * @property int $id
+ * @property string $name
+ *
+ * @property float|int|null $rating
+ * @property int|null $scores_count
+ * @property bool|int|null $is_favorite
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Director[] $directors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Actor[] $actors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Genre[] $genres
+ */
 class Film extends Model
 {
     /** @use HasFactory<\Database\Factories\FilmFactory> */
