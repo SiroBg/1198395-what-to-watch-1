@@ -7,7 +7,9 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * @psalm-api
@@ -26,7 +28,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): Success
     {
-        if (!Auth::attempt($request->validated())) {
+        if (! Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
         }
 
@@ -37,10 +39,10 @@ class AuthController extends Controller
 
     public function logout(): Success
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
-        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
+        /** @var PersonalAccessToken|null $token */
         $token = $user->currentAccessToken();
 
         if ($token) {

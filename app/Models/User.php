@@ -19,10 +19,11 @@ use Laravel\Sanctum\HasApiTokens;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Notifiable;
-    use HasApiTokens;
 
     protected $hidden =
         [

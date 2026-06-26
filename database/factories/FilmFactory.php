@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Film>
+ *
  * @psalm-api
  */
 class FilmFactory extends Factory

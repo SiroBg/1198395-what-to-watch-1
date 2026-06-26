@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\ActorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Actor extends Model
 {
-    /** @use HasFactory<\Database\Factories\ActorFactory> */
+    /** @use HasFactory<ActorFactory> */
     use HasFactory;
 
     protected $hidden =

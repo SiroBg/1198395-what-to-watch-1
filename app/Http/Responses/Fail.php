@@ -11,7 +11,9 @@ use Throwable;
 class Fail extends Base
 {
     protected string $message;
+
     protected Throwable $exception;
+
     protected array $errors;
 
     public function __construct(
@@ -45,9 +47,10 @@ class Fail extends Base
     protected function makeResponseData(): ?array
     {
         $response['message'] = $this->message;
-        if (!empty($this->errors)) {
+        if (! empty($this->errors)) {
             $response['errors'] = $this->errors;
         }
+
         return $response;
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class Base implements Responsable
 {
     protected mixed $data;
+
     protected int $statusCode;
 
     public function __construct(

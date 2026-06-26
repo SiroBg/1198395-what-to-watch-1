@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\FilmStatus;
+use Database\Factories\FilmFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,18 +15,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property string $name
- *
  * @property float|int|null $rating
  * @property int|null $scores_count
  * @property bool|int|null $is_favorite
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Director[] $directors
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Actor[] $actors
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Genre[] $genres
+ * @property-read Collection|Director[] $directors
+ * @property-read Collection|Actor[] $actors
+ * @property-read Collection|Genre[] $genres
  */
 class Film extends Model
 {
-    /** @use HasFactory<\Database\Factories\FilmFactory> */
+    /** @use HasFactory<FilmFactory> */
     use HasFactory;
 
     protected $casts =
@@ -90,7 +90,7 @@ class Film extends Model
 
     public function scopeWithIsFavorite($query, ?int $userId)
     {
-        if (!$userId) {
+        if (! $userId) {
             return $query->selectRaw('0 as is_favorite');
         }
 
@@ -101,7 +101,7 @@ class Film extends Model
 
     public function scopeStatus($query, ?string $status)
     {
-        if (!$status) {
+        if (! $status) {
             $status = FilmStatus::READY->value;
         }
 
@@ -118,6 +118,7 @@ class Film extends Model
         if ($field === 'rating') {
             $query->withRating();
         }
+
         return $query->orderBy($field, $direction);
     }
 }

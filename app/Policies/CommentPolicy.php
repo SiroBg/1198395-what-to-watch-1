@@ -33,6 +33,6 @@ class CommentPolicy
     public function delete(User $user, Comment $comment): bool
     {
         return $comment->user_id === $user->id
-                && !$comment->replies()->exists();
+                && ! $comment->replies()->exists();
     }
 }

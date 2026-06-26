@@ -22,6 +22,7 @@ dataset('film_access_matrix', [
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);
+
             return $moderator;
         },
         'status' => null,
@@ -35,25 +36,25 @@ test('возвращает правильную структуру фильмо�
 
     expect($response)->assertOk()
         ->assertJsonStructure([
-             'data' => [
-                 '*' => ['id', 'name', 'preview_image', 'preview_video_link'],
-             ],
+            'data' => [
+                '*' => ['id', 'name', 'preview_image', 'preview_video_link'],
+            ],
         ]);
 });
 
 test('возвращает правильную структуру для одного фильма', function () {
     $film = Film::factory()->create();
 
-    $response = $this->getJson('/api/films/' . $film->id);
+    $response = $this->getJson('/api/films/'.$film->id);
 
     expect($response)->assertOk()
         ->assertJsonStructure([
-             'data' => [
+            'data' => [
                 'id', 'name', 'poster_image', 'preview_image', 'background_image',
                 'background_color', 'video_link', 'preview_video_link', 'description',
                 'rating', 'scores_count', 'directors', 'starring', 'run_time',
                 'genres', 'released', 'is_favorite',
-             ],
+            ],
         ]);
 });
 
@@ -83,7 +84,7 @@ test('проверка доступа к редактированию фильм
     $resolvedUser = $user();
 
     $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
-    $response = $request->patchJson('/api/films/' . $film->id, $expectedData);
+    $response = $request->patchJson('/api/films/'.$film->id, $expectedData);
 
     if ($status) {
         expect($response)->assertStatus($status);

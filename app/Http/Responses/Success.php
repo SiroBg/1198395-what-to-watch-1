@@ -33,6 +33,7 @@ class Success extends Base
 
         if ($this->data instanceof JsonResource) {
             $resourceData = $this->data->toResponse(request())->getData(true);
+
             return [
                 'data' => $resourceData['data'] ?? $resourceData,
             ];

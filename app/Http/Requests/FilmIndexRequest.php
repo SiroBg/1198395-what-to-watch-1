@@ -20,8 +20,8 @@ class FilmIndexRequest extends FormRequest
             'page' => ['sometimes', 'integer', 'min:1'],
             'genre' => ['sometimes', 'nullable', 'integer', Rule::exists('genres', 'id')],
             'status' => ['sometimes', Rule::enum(FilmStatus::class)],
-            'order_by' => ['sometimes', Rule::in(['released','rating'])],
-            'order_to' => ['sometimes', Rule::in(['asc', 'desc'])] ,
+            'order_by' => ['sometimes', Rule::in(['released', 'rating'])],
+            'order_to' => ['sometimes', Rule::in(['asc', 'desc'])],
         ];
     }
 
@@ -34,7 +34,7 @@ class FilmIndexRequest extends FormRequest
 
             if (
                 in_array($status, [FilmStatus::PENDING->value, FilmStatus::MODERATION->value])
-                && (!$user || !$user->hasRole('moderator'))
+                && (! $user || ! $user->hasRole('moderator'))
             ) {
                 $validator->errors()->add(
                     'status',

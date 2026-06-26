@@ -28,6 +28,7 @@ class CommentController extends Controller
 
         return new Success(new CommentResource($comment), 201);
     }
+
     /**
      * Display the specified resource.
      */

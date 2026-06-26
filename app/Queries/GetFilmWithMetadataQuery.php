@@ -9,7 +9,6 @@ class GetFilmWithMetadataQuery
 {
     /**
      * Получить фильм со всеми агрегатами, связями и флагом "избранное" для пользователя.
-     * @param int $filmId
      */
     public function execute(int $filmId, int|string|null $userId = null): FilmResource
     {
@@ -20,6 +19,7 @@ class GetFilmWithMetadataQuery
             ->withIsFavorite($userId)
             ->whereKey($filmId)
             ->firstOrFail();
+
         return new FilmResource($film);
     }
 }

@@ -32,8 +32,7 @@ class SaveFilmAction
     {
         return collect($arrayName)
             ->map(
-                fn ($value) =>
-                $modelClass::firstOrCreate(['name' => $value])->id,
+                fn ($value) => $modelClass::firstOrCreate(['name' => $value])->id,
             );
     }
 }

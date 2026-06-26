@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\DirectorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Director extends Model
 {
-    /** @use HasFactory<\Database\Factories\DirectorFactory> */
+    /** @use HasFactory<DirectorFactory> */
     use HasFactory;
 
     protected $hidden =

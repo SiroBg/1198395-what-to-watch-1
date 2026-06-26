@@ -12,10 +12,10 @@ class FetchFilmsQuery
     /**
      * Выполняет гибкую фильтрацию и пагинацию фильмов.
      *
-     * @param array $filters Данные из Request
-     * @param Builder|Relation|null $baseQuery Базовый запрос (например, связь favoriteFilms())
+     * @param  array  $filters  Данные из Request
+     * @param  Builder|Relation|null  $baseQuery  Базовый запрос (например, связь favoriteFilms())
      */
-    public function execute(array $filters, Builder|Relation $baseQuery = null): LengthAwarePaginator
+    public function execute(array $filters, Builder|Relation|null $baseQuery = null): LengthAwarePaginator
     {
         $query = $baseQuery ?? Film::query();
 

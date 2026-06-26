@@ -12,13 +12,12 @@ class OmdbFilmsRepository implements FilmsRepositoryInterface
         private ClientInterface $httpClient,
         private RequestFactoryInterface $requestFactory,
         private string $apiKey,
-    ) {
-    }
+    ) {}
 
     #[\Override]
     public function getFilmByImdbId(string $imdbId): array
     {
-        $url = 'https://www.omdbapi.com/?apikey=' . $this->apiKey . '&i=' . $imdbId;
+        $url = 'https://www.omdbapi.com/?apikey='.$this->apiKey.'&i='.$imdbId;
 
         $request = $this->requestFactory->createRequest(
             'GET',

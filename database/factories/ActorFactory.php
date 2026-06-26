@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Actor>
+ *
  * @psalm-api
  */
 class ActorFactory extends Factory

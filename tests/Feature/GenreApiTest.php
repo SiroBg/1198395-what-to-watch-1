@@ -9,21 +9,22 @@ uses(RefreshDatabase::class);
 
 dataset('genre_access_matrix', [
     'неавторизованный гость получает 401' => [
-        'user'   => fn () => null,
-        'status' => 401
+        'user' => fn () => null,
+        'status' => 401,
     ],
     'обычный пользователь получает 403' => [
-        'user'   => fn () => User::factory()->create(),
-        'status' => 403
+        'user' => fn () => User::factory()->create(),
+        'status' => 403,
     ],
     'модератор успешно обновляет жанр' => [
-        'user'   => function () {
+        'user' => function () {
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);
+
             return $moderator;
         },
-        'status' => null
+        'status' => null,
     ],
 ]);
 
@@ -35,9 +36,9 @@ test('возвращает правильную структуру данных'
     expect($response)
         ->assertOk()
         ->assertJsonStructure([
-             'data' => [
-                 '*' => ['id', 'name'],
-             ],
+            'data' => [
+                '*' => ['id', 'name'],
+            ],
         ]);
 });
 
@@ -46,7 +47,7 @@ test('проверка доступа к редактированию жанра
     $resolvedUser = $user();
 
     $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
-    $response = $request->patchJson('/api/genres/' . $genre->id, ['name' => 'Ужасы']);
+    $response = $request->patchJson('/api/genres/'.$genre->id, ['name' => 'Ужасы']);
 
     if ($status) {
         expect($response)->assertStatus($status);

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class OmdbDataConverter
@@ -32,16 +33,17 @@ class OmdbDataConverter
 
     private function parseReleaseYear(?string $date): ?int
     {
-        if (!$date || $date === 'N/A') {
+        if (! $date || $date === 'N/A') {
             return null;
         }
 
         try {
-            return (int) \Carbon\Carbon::parse($date)->format('Y');
+            return (int) Carbon::parse($date)->format('Y');
         } catch (\Exception $e) {
             if (preg_match('/\b\d{4}\b/', $date, $matches)) {
                 return (int) $matches[0];
             }
+
             return null;
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Film;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ class FilmResource extends JsonResource
     #[\Override]
     public function toArray(Request $request): array
     {
-        /** @var \App\Models\Film $film */
+        /** @var Film $film */
         $film = $this->resource;
 
         return [

@@ -26,8 +26,7 @@ class ProcessFilmImportJob implements ShouldQueue
      */
     public function __construct(
         protected string $imdbId,
-    ) {
-    }
+    ) {}
 
     /**
      * Выполнить задачу.

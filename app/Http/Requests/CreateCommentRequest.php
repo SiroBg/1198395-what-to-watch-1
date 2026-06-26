@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Comment;
+use App\Models\Film;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -53,14 +55,15 @@ class CreateCommentRequest extends FormRequest
         $validator->after(function ($validator) {
             $commentId = $this->input('comment_id');
             if ($commentId) {
-                $comment = \App\Models\Comment::find($commentId);
+                $comment = Comment::find($commentId);
 
-                if (!$comment) {
+                if (! $comment) {
                     $validator->errors()->add('comment_id', 'Комментарий не найден.');
+
                     return;
                 }
 
-                /** @var \App\Models\Film|null $film */
+                /** @var Film|null $film */
                 $film = $this->route('film');
 
                 if ($comment->film_id !== $film->id) {
