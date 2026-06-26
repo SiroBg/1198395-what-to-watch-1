@@ -1,156 +1,120 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Comment;
 use App\Models\Film;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class CommentApiTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_returns_all_comments_with_200_response(): void
-    {
-        $film = Film::factory()->create();
+dataset('allowed_users_for_deletion', [
+    'автор комментария' => [
+        fn ($comment) => User::find($comment->user_id)
+    ],
+    'модератор' => [
+        fn () => tap(User::factory()->create(), function ($user) {
+            $user->roles()->attach(Role::firstOrCreate(['name' => 'moderator']));
+        })
+    ],
+]);
 
-        Comment::factory()->create(['film_id' => $film->id]);
-        Comment::factory()->create(['film_id' => $film->id]);
-        Comment::factory()->create(['film_id' => $film->id]);
+test('возвращает правильную структуру комментариев', function () {
+    $film = Film::factory()->create();
+    Comment::factory()->count(3)->create(['film_id' => $film->id]);
 
-        $response = $this->getJson('/api/comments/' . $film->id);
+    $response = $this->getJson('/api/comments/' . $film->id);
 
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                         '*' => [
-                            'id',
-                            'user_id',
-                            'film_id',
-                            'comment_id',
-                            'created_at',
-                            'updated_at',
-                            'text',
-                            'rating',
-                            'author',
-                        ],
-                     ],
-                 ]);
-    }
-
-    public function test_user_can_create_comments(): void
-    {
-        $film = Film::factory()->create();
-
-        $commentData = [
-            'text' => str_repeat('X', 100),
-            'rating' => 1,
-        ];
-
-        $unauthorizedResponse = $this->postJson('/api/comments/' . $film->id, $commentData);
-
-        $unauthorizedResponse->assertStatus(401);
-
-        $user = User::factory()->create();
-
-        $authorizedResponse = $this->actingAs($user)->postJson('/api/comments/' . $film->id, $commentData);
-
-        $authorizedResponse->assertStatus(201)->assertJson([
-            'data' => [
-                'user_id' => $user->id,
-                'film_id' => $film->id,
-                'comment_id' => null,
-                'text' => $commentData['text'],
-                'rating' => $commentData['rating'],
-            ],
+    expect($response)->assertOk()
+        ->assertJsonStructure([
+             'data' => [
+                 '*' => ['id', 'user_id', 'film_id', 'comment_id', 'created_at', 'updated_at', 'text', 'rating', 'author'],
+             ],
         ]);
-    }
+});
 
-    public function test_user_can_update_his_comments(): void
-    {
-        $userWithComment = User::factory()->create();
-        $comment = Comment::factory()->create(['user_id' => $userWithComment->id]);
+test('пользователи могут создавать комментарии', function () {
+    $film = Film::factory()->create();
+    $commentData = [
+        'text' => str_repeat('X', 100),
+        'rating' => 1
+    ];
 
-        $userWithoutComment = User::factory()->create();
+    expect($this->postJson('/api/comments/' . $film->id, $commentData))->assertUnauthorized();
 
-        $expectedData = [
-            'text' => str_repeat('X', 100),
-            'rating' => 1,
-        ];
+    $user = User::factory()->create();
+    $authorizedResponse = $this->actingAs($user)->postJson('/api/comments/' . $film->id, $commentData);
 
-        $rightUserResponse = $this->actingAs($userWithComment)->patchJson('/api/comments/' . $comment->id, [
-            'text' => $expectedData['text'],
-            'rating' => $expectedData['rating'],
-        ]);
+    expect($authorizedResponse)->assertCreated();
+    expect($authorizedResponse->json('data'))
+        ->toBeArray()
+        ->toHaveKey('user_id', $user->id)
+        ->toHaveKey('film_id', $film->id)
+        ->toHaveKey('text', $commentData['text'])
+        ->toHaveKey('rating', $commentData['rating']);
+});
 
-        $rightUserResponse->assertStatus(201)->assertJson([
-            'data' => [
-                'id' => $comment->id,
-                'user_id' => $userWithComment->id,
-                'text' => $expectedData['text'],
-                'rating' => $expectedData['rating'],
-            ],
-        ]);
+test('автор комментария может редактировать свой комментарий', function () {
+    $user = User::factory()->create();
+    $comment = Comment::factory()->create(['user_id' => $user->id]);
+    $expectedData = [
+        'text' => str_repeat('X', 100),
+        'rating' => 1
+    ];
 
-        $wrongUserResponse = $this->actingAs($userWithoutComment)->patchJson('/api/comments/' . $comment->id, [
-            'text' => $expectedData['text'],
-            'rating' => $expectedData['rating'],
-        ]);
+    $response = $this->actingAs($user)->patchJson('/api/comments/' . $comment->id, $expectedData);
 
-        $wrongUserResponse->assertStatus(403);
-    }
+    expect($response)->assertCreated();
+    expect($response->json('data'))
+        ->id->toBe($comment->id)
+        ->user_id->toBe($user->id)
+        ->text->toBe($expectedData['text'])
+        ->rating->toBe($expectedData['rating']);
+});
 
-    public function test_user_can_delete_his_comments(): void
-    {
-        $user = User::factory()->create();
-        $comment = Comment::factory()->create(['user_id' => $user->id]);
+test('разрешенный пользователь может удалить комментарий', function (Closure $getUser) {
+    $comment = Comment::factory()->create();
+    $user = $getUser($comment);
 
-        $wrongUser = User::factory()->create();
+    $response = $this->actingAs($user)->delete('/api/comments/' . $comment->id);
 
-        $wrongUserResponse = $this->actingAs($wrongUser)->delete('/api/comments/' . $comment->id);
+    expect($response)->assertOk();
+    $this->assertModelMissing($comment);
+})->with('allowed_users_for_deletion');
 
-        $wrongUserResponse->assertStatus(403);
 
-        $response = $this->actingAs($user)->delete('/api/comments/' . $comment->id);
+test('пользователь не может управлять чужим комментарием', function (string $method, string $endpointSuffix) {
+    $comment = Comment::factory()->create();
+    $wrongUser = User::factory()->create();
 
-        $response->assertStatus(200);
+    $url = '/api/comments/' . $comment->id . $endpointSuffix;
+    $response = $this->actingAs($wrongUser)->json($method, $url, [
+        'text' => str_repeat('X', 100),
+        'rating' => 5
+    ]);
 
-        $this->assertModelMissing($comment);
-    }
+    expect($response)->assertForbidden();
+})->with([
+    'при попытке обновления' => ['PATCH', ''],
+    'при попытке удаления'   => ['DELETE', ''],
+]);
 
-    public function test_moderator_can_patch_and_delete_others_comments(): void
-    {
-        $moderator = User::factory()->create();
-        $role = Role::create(['name' => 'moderator']);
-        $moderator->roles()->attach($role);
+test('модератор может редактировать чужие комментарии', function () {
+    $moderator = User::factory()->create();
+    $role = Role::firstOrCreate(['name' => 'moderator']);
+    $moderator->roles()->attach($role);
 
-        $comment = Comment::factory()->create();
+    $comment = Comment::factory()->create();
+    $expectedData = [
+        'text' => str_repeat('X', 100),
+        'rating' => 1
+    ];
 
-        $expectedData = [
-            'text' => str_repeat('X', 100),
-            'rating' => 1,
-        ];
+    $patchResponse = $this->actingAs($moderator)->patchJson('/api/comments/' . $comment->id, $expectedData);
 
-        $patchResponse = $this->actingAs($moderator)->patchJson('/api/comments/' . $comment->id, [
-            'text' => $expectedData['text'],
-            'rating' => $expectedData['rating'],
-        ]);
-
-        $patchResponse->assertStatus(201)->assertJson([
-            'data' => [
-                'id' => $comment->id,
-                'text' => $expectedData['text'],
-                'rating' => $expectedData['rating'],
-            ],
-        ]);
-
-        $deleteResponse = $this->actingAs($moderator)->delete('/api/comments/' . $comment->id);
-
-        $deleteResponse->assertStatus(200);
-
-        $this->assertModelMissing($comment);
-    }
-}
+    expect($patchResponse)->assertCreated();
+    expect($patchResponse->json('data'))
+        ->id->toBe($comment->id)
+        ->text->toBe($expectedData['text'])
+        ->rating->toBe($expectedData['rating']);
+});

@@ -8,7 +8,7 @@ use App\Http\Requests\FilmIndexRequest;
 use App\Http\Requests\UpdateFilmRequest;
 use App\Http\Resources\FilmPreviewResource;
 use App\Http\Responses\Success;
-use App\Jobs\ProcessFilmImport;
+use App\Jobs\ProcessFilmImportJob;
 use App\Models\Film;
 use App\Models\Promo;
 use App\Queries\FetchFilmsQuery;
@@ -36,7 +36,7 @@ class FilmController extends Controller
             'imdb_id' => $request['imdb_id'],
         ]);
 
-        ProcessFilmImport::dispatch($request['imdb_id']);
+        ProcessFilmImportJob::dispatch($request['imdb_id']);
 
         return new Success($film->toArray(), 201);
     }

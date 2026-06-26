@@ -1,121 +1,97 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Film;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Queue;
 
-class FilmApiTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_returns_all_films_with_200_response(): void
-    {
-        Film::factory()->count(10)->create();
+dataset('film_access_matrix', [
+    'неавторизованный гость получает 401' => [
+        'user' => fn () => null,
+        'status' => 401,
+    ],
+    'обычный пользователь получает 403' => [
+        'user' => fn () => User::factory()->create(),
+        'status' => 403,
+    ],
+    'модератор успешно проходит проверку' => [
+        'user' => function () {
+            $moderator = User::factory()->create();
+            $role = Role::firstOrCreate(['name' => 'moderator']);
+            $moderator->roles()->attach($role);
+            return $moderator;
+        },
+        'status' => null,
+    ],
+]);
 
-        $response = $this->getJson('/api/films');
+test('возвращает правильную структуру фильмов', function () {
+    Film::factory()->count(10)->create();
 
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                         '*' => [
-                            'id',
-                            'name',
-                            'preview_image',
-                            'preview_video_link',
-                        ],
-                     ],
-                 ]);
-    }
+    $response = $this->getJson('/api/films');
 
-    public function test_returns_right_film_structure(): void
-    {
-        $film = Film::factory()->create();
-
-        $response = $this->getJson('/api/films/' . $film->id);
-
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                        'id',
-                        'name',
-                        'poster_image',
-                        'preview_image',
-                        'background_image',
-                        'background_color',
-                        'video_link',
-                        'preview_video_link',
-                        'description',
-                        'rating',
-                        'scores_count',
-                        'directors',
-                        'starring',
-                        'run_time',
-                        'genres',
-                        'released',
-                        'is_favorite',
-                     ],
-                 ]);
-    }
-
-    public function test_only_moderator_can_create_films(): void
-    {
-        $imdbId = 'tt1234567';
-
-        $unauthorizedResponse = $this->postJson('/api/films', ['imdb_id' => $imdbId]);
-
-        $unauthorizedResponse->assertStatus(401);
-
-        $notModeratorUser = User::factory()->create();
-
-        $notModeratorUserResponse = $this->actingAs($notModeratorUser)->postJson('/api/films', ['imdb_id' => $imdbId]);
-
-        $notModeratorUserResponse->assertStatus(403);
-
-        $moderator = User::factory()->create();
-        $role = Role::create(['name' => 'moderator']);
-        $moderator->roles()->attach($role);
-
-        $moderatorResponse = $this->actingAs($moderator)->postJson('/api/films', ['imdb_id' => $imdbId]);
-
-        $moderatorResponse->assertStatus(201)->assertJson([
-            'data' => [
-                'imdb_id' => $imdbId,
-            ],
+    expect($response)->assertOk()
+        ->assertJsonStructure([
+             'data' => [
+                 '*' => ['id', 'name', 'preview_image', 'preview_video_link'],
+             ],
         ]);
-    }
+});
 
-    public function test_only_moderator_can_patch_films(): void
-    {
-        $film = Film::factory()->create();
+test('возвращает правильную структуру для одного фильма', function () {
+    $film = Film::factory()->create();
 
-        $expectedData = [
-            'imdb_id' => 'tt1234567',
-            'name' => 'Titanic',
-            'status' => 'ready',
-        ];
+    $response = $this->getJson('/api/films/' . $film->id);
 
-        $unauthorizedResponse = $this->patchJson('/api/films/' . $film->id, $expectedData);
-
-        $unauthorizedResponse->assertStatus(401);
-
-        $notModeratorUser = User::factory()->create();
-
-        $notModeratorUserResponse = $this->actingAs($notModeratorUser)->patchJson('/api/films/' . $film->id, $expectedData);
-
-        $notModeratorUserResponse->assertStatus(403);
-
-        $moderator = User::factory()->create();
-        $role = Role::create(['name' => 'moderator']);
-        $moderator->roles()->attach($role);
-
-        $moderatorResponse = $this->actingAs($moderator)->patchJson('/api/films/' . $film->id, $expectedData);
-
-        $moderatorResponse->assertStatus(200)->assertJson([
-            'data' => $expectedData,
+    expect($response)->assertOk()
+        ->assertJsonStructure([
+             'data' => [
+                'id', 'name', 'poster_image', 'preview_image', 'background_image',
+                'background_color', 'video_link', 'preview_video_link', 'description',
+                'rating', 'scores_count', 'directors', 'starring', 'run_time',
+                'genres', 'released', 'is_favorite',
+             ],
         ]);
+});
+
+test('проверка доступа к созданию фильма', function (Closure $user, ?int $status) {
+    Queue::fake();
+    $imdbId = 'tt1234567';
+    $resolvedUser = $user();
+
+    $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
+    $response = $request->postJson('/api/films', ['imdb_id' => $imdbId]);
+
+    if ($status) {
+        expect($response)->assertStatus($status);
+    } else {
+        expect($response)->assertCreated();
+        expect($response->json('data'))->imdb_id->toBe($imdbId);
     }
-}
+})->with('film_access_matrix');
+
+test('проверка доступа к редактированию фильма', function (Closure $user, ?int $status) {
+    $film = Film::factory()->create();
+    $expectedData = [
+        'imdb_id' => 'tt1234567',
+        'name' => 'Titanic',
+        'status' => 'ready',
+    ];
+    $resolvedUser = $user();
+
+    $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
+    $response = $request->patchJson('/api/films/' . $film->id, $expectedData);
+
+    if ($status) {
+        expect($response)->assertStatus($status);
+    } else {
+        expect($response)->assertOk();
+        expect($response->json('data'))
+            ->imdb_id->toBe($expectedData['imdb_id'])
+            ->name->toBe($expectedData['name'])
+            ->status->toBe($expectedData['status']);
+    }
+})->with('film_access_matrix');

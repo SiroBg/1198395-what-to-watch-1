@@ -2,6 +2,7 @@
 
 namespace App\Repositories\FilmsRepositories;
 
+use Exception;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
@@ -25,6 +26,12 @@ class OmdbFilmsRepository implements FilmsRepositoryInterface
 
         $response = $this->httpClient->sendRequest($request);
 
-        return json_decode($response->getBody()->getContents(), true);
+        $result = json_decode($response->getBody()->getContents(), true);
+
+        if (isset($result['Error'])) {
+            throw new Exception($result['Error']);
+        }
+
+        return $result;
     }
 }

@@ -1,28 +1,21 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class CommentModelTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    public function test_returns_the_registered_user_name_as_author()
-    {
-        $user = User::factory(['name' => 'Иван Иванов'])->create();
+test('возвращает автора комментария в поле автор', function () {
+    $user = User::factory(['name' => 'Иван Иванов'])->create();
 
-        $comment = Comment::factory(['user_id' => $user->id])->create();
+    $comment = Comment::factory(['user_id' => $user->id])->create();
 
-        $this->assertEquals('Иван Иванов', $comment->author_name);
-    }
+    expect($comment->author_name)->toBe('Иван Иванов');
+});
 
-    public function test_returns_guest_if_comment_has_no_user_id()
-    {
-        $guestComment = Comment::factory()->guest()->create();
-        $this->assertEquals('Гость', $guestComment->author_name);
-    }
-}
+test('возвращает гостя как автора комментария без user_id', function () {
+    $guestComment = Comment::factory()->guest()->create();
+
+    expect($guestComment->author_name)->toBe('Гость');
+});
