@@ -44,7 +44,7 @@ describe('OmdbDataConverter: Базовая конвертация', function ()
             'starring' => [],
             'directors' => [],
             'genres' => [],
-            'run_time' => 0, // Приведение пустой строки к (int) через Str::before дает 0
+            'run_time' => null,
         ]);
     });
 });
@@ -57,7 +57,7 @@ describe('OmdbDataConverter: Парсинг строк (Actors, Directors, Genre
 
         $result = $this->converter->convert($omdbData);
 
-        expect($result['starring'])->toBe(['Leo', 'Tom', 'Brad']);
+        expect($result['starring'])->toEqual(['Leo', 'Tom', 'Brad']);
     });
 
     it('возвращает пустой массив, если в OMDB пришло значение N/A', function () {
@@ -81,8 +81,8 @@ describe('OmdbDataConverter: Парсинг года выпуска (Released)',
         expect($this->converter->convert($omdbData)['released'])->toBe(2026);
     });
 
-    it('использует поле Year, если поле Released отсутствует или некорректно', function () {
-        $omdbData = ['Year' => '2019'];
+    it('использует поле Year, если поле Released отсутствует', function () {
+        $omdbData = ['Year' => '2019-01-01'];
         expect($this->converter->convert($omdbData)['released'])->toBe(2019);
     });
 

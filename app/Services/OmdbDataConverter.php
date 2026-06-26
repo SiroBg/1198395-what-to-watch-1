@@ -28,7 +28,9 @@ class OmdbDataConverter
             return [];
         }
 
-        return Str::of($string)->explode(',')->map(fn ($item) => trim($item))->filter()->toArray();
+        $items = Str::of($string)->explode(',')->map(fn ($item) => trim($item))->filter()->toArray();
+
+        return array_values($items);
     }
 
     private function parseReleaseYear(?string $date): ?int
@@ -50,6 +52,10 @@ class OmdbDataConverter
 
     private function parseRuntime(?string $runtime): ?int
     {
+        if (!$runtime) {
+            return null;
+        }
+
         return (int) Str::before($runtime, ' ');
     }
 }
