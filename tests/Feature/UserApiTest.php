@@ -51,7 +51,7 @@ describe('PATCH api/user (update)', function () {
         Sanctum::actingAs($user);
 
         patchJson('/api/user', [
-            'name'  => 'New Name',
+            'name' => 'New Name',
             'email' => 'new@example.com',
         ])
             ->assertOk()
@@ -59,8 +59,8 @@ describe('PATCH api/user (update)', function () {
             ->assertJsonPath('data.email', 'new@example.com');
 
         $this->assertDatabaseHas('users', [
-            'id'    => $user->id,
-            'name'  => 'New Name',
+            'id' => $user->id,
+            'name' => 'New Name',
             'email' => 'new@example.com',
         ]);
     });
@@ -73,9 +73,9 @@ describe('PATCH api/user (update)', function () {
         Sanctum::actingAs($user);
 
         patchJson('/api/user', [
-            'name'                  => $user->name,
-            'email'                 => $user->email,
-            'password'              => 'newpassword123',
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => 'newpassword123',
             'password_confirmation' => 'newpassword123',
         ])->assertOk();
 
@@ -92,9 +92,9 @@ describe('PATCH api/user (update)', function () {
         $file = UploadedFile::fake()->image('avatar.jpg');
 
         patchJson('/api/user', [
-            'name'  => $user->name,
+            'name' => $user->name,
             'email' => $user->email,
-            'file'  => $file,
+            'file' => $file,
         ])
             ->assertOk();
 
@@ -115,9 +115,9 @@ describe('PATCH api/user (update)', function () {
         Sanctum::actingAs($user);
 
         patchJson('/api/user', [
-            'name'  => $user->name,
+            'name' => $user->name,
             'email' => $user->email,
-            'file'  => UploadedFile::fake()->image('new.jpg'),
+            'file' => UploadedFile::fake()->image('new.jpg'),
         ])
             ->assertOk();
 
@@ -138,7 +138,7 @@ describe('PATCH api/user (update)', function () {
         Sanctum::actingAs($user);
 
         patchJson('/api/user', [
-            'name'  => $user->name,
+            'name' => $user->name,
             'email' => 'taken@example.com',
         ])
             ->assertUnprocessable()
@@ -147,7 +147,7 @@ describe('PATCH api/user (update)', function () {
 
     it('возвращает ошибку 401 для гостя', function () {
         patchJson('/api/user', [
-            'name'  => 'John',
+            'name' => 'John',
             'email' => 'john@example.com',
         ])
             ->assertUnauthorized();

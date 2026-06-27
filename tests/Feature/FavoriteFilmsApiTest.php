@@ -47,7 +47,7 @@ describe('GET api/favorite (index)', function () {
                             'id',
                             'name',
                             'preview_image',
-                            'preview_video_link'
+                            'preview_video_link',
                         ],
                     ],
                 ]);

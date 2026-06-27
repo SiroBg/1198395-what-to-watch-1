@@ -23,8 +23,6 @@ class Promo extends Model
 
     /**
      * Возвращает промо фильм.
-     *
-     * @return BelongsTo
      */
     public function film(): BelongsTo
     {

@@ -26,9 +26,8 @@ class GenreController extends Controller
     /**
      * Обновляет информацию о жанре.
      *
-     * @param UpdateGenreRequest $request Запрос из формы.
-     * @param Genre              $genre Жанр.
-     *
+     * @param  UpdateGenreRequest  $request  Запрос из формы.
+     * @param  Genre  $genre  Жанр.
      * @return Success Формат ответа.
      */
     public function update(UpdateGenreRequest $request, Genre $genre): Success

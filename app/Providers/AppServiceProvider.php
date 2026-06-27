@@ -31,8 +31,6 @@ final class AppServiceProvider extends ServiceProvider
 
     /**
      * Запускает сервисы приложения.
-     *
-     * @return void
      */
     public function boot(): void
     {

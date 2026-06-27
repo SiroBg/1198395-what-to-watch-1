@@ -8,8 +8,6 @@ final class UpdateGenreRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -18,8 +16,6 @@ final class UpdateGenreRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {

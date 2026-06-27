@@ -11,23 +11,22 @@ final class OmdbFilmsRepository implements FilmsRepositoryInterface
     /**
      * Создаёт репозиторий omdb api.
      *
-     * @param ClientInterface         $httpClient Http интерфейс.
-     * @param RequestFactoryInterface $requestFactory Фабрика запросов.
-     * @param string                  $apiKey Api ключ.
+     * @param  ClientInterface  $httpClient  Http интерфейс.
+     * @param  RequestFactoryInterface  $requestFactory  Фабрика запросов.
+     * @param  string  $apiKey  Api ключ.
      */
     public function __construct(
         private ClientInterface $httpClient,
         private RequestFactoryInterface $requestFactory,
         private string $apiKey,
-    ) {
-    }
+    ) {}
 
     /** {@inheritdoc} */
     #[\Override]
     public function getFilmByImdbId(string $imdbId): array
     {
-        $url = 'https://www.omdbapi.com/?apikey=' . $this->apiKey . '&i='
-            . $imdbId;
+        $url = 'https://www.omdbapi.com/?apikey='.$this->apiKey.'&i='
+            .$imdbId;
 
         $request = $this->requestFactory->createRequest(
             'GET',

@@ -8,8 +8,6 @@ final class LoginRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -18,13 +16,11 @@ final class LoginRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'email'    => [
+            'email' => [
                 'required',
                 'string',
                 'email',

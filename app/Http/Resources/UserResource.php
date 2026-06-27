@@ -11,9 +11,7 @@ final class UserResource extends JsonResource
     /**
      * Возвращает правильный формат информации о пользователе.
      *
-     * @param Request $request Запрос.
-     *
-     * @return array
+     * @param  Request  $request  Запрос.
      */
     #[\Override]
     public function toArray(Request $request): array
@@ -22,11 +20,11 @@ final class UserResource extends JsonResource
         $user = $this->resource;
 
         return [
-            'id'    => $user->id,
-            'name'  => $user->name,
+            'id' => $user->id,
+            'name' => $user->name,
             'email' => $user->email,
-            'file'  => $user->file,
-            'role'  => $user->roles->first()?->name,
+            'file' => $user->file,
+            'role' => $user->roles->first()?->name,
         ];
     }
 }

@@ -9,15 +9,15 @@ uses(RefreshDatabase::class);
 
 dataset('genre access matrix', [
     'неавторизованный гость получает 401' => [
-        'user'   => fn() => null,
+        'user' => fn () => null,
         'status' => 401,
     ],
-    'обычный пользователь получает 403'   => [
-        'user'   => fn() => User::factory()->create(),
+    'обычный пользователь получает 403' => [
+        'user' => fn () => User::factory()->create(),
         'status' => 403,
     ],
-    'модератор успешно обновляет жанр'    => [
-        'user'   => function () {
+    'модератор успешно обновляет жанр' => [
+        'user' => function () {
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);
@@ -53,7 +53,7 @@ describe('PATCH api/genres/{genre} (update)', function () {
 
             $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
             $response = $request->patchJson(
-                '/api/genres/' . $genre->id,
+                '/api/genres/'.$genre->id,
                 ['name' => 'Ужасы']
             );
 

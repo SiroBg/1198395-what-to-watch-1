@@ -11,9 +11,7 @@ final class GetSimilarFilmsQuery
     /**
      * Возвращает информацию о похожих фильмах по переданному.
      *
-     * @param Film $film Фильм.
-     *
-     * @return array
+     * @param  Film  $film  Фильм.
      */
     public function execute(Film $film): array
     {

@@ -12,9 +12,9 @@ final class FetchFilmsQuery
     /**
      * Выполняет гибкую фильтрацию и пагинацию фильмов.
      *
-     * @param array                 $filters   Данные из Request
-     * @param Builder|Relation|null $baseQuery Базовый запрос. Например,
-     *                                         связь favoriteFilms.
+     * @param  array  $filters  Данные из Request
+     * @param  Builder|Relation|null  $baseQuery  Базовый запрос. Например,
+     *                                            связь favoriteFilms.
      */
     public function execute(
         array $filters,

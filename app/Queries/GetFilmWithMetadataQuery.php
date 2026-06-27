@@ -10,10 +10,8 @@ final class GetFilmWithMetadataQuery
     /**
      * Возвращает информацию о фильме со всеми необходимыми данными.
      *
-     * @param int             $filmId Id фильма.
-     * @param int|string|null $userId Id пользователя.
-     *
-     * @return FilmResource
+     * @param  int  $filmId  Id фильма.
+     * @param  int|string|null  $userId  Id пользователя.
      */
     public function execute(
         int $filmId,

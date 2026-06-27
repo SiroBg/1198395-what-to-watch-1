@@ -7,6 +7,7 @@ use App\Models\Director;
 use App\Models\Film;
 use App\Models\Genre;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class SaveFilmAction
@@ -14,10 +15,9 @@ final class SaveFilmAction
     /**
      * Сохраняет фильм в БД.
      *
-     * @param Film $film Модель фильма.
-     * @param array $data Данные о фильме из формы.
+     * @param  Film  $film  Модель фильма.
+     * @param  array  $data  Данные о фильме из формы.
      *
-     * @return Film
      * @throws \Throwable
      */
     public function execute(Film $film, array $data): Film
@@ -50,18 +50,16 @@ final class SaveFilmAction
     /**
      * Создаёт или получает id моделей в БД и возвращает коллекцию этих моделей.
      *
-     * @param array  $arrayName Массив значений.
-     * @param string $modelClass Имя класса.
-     *
-     * @return \Illuminate\Support\Collection
+     * @param  array  $arrayName  Массив значений.
+     * @param  string  $modelClass  Имя класса.
      */
     private function createOrGetIds(
         array $arrayName,
         string $modelClass
-    ): \Illuminate\Support\Collection {
+    ): Collection {
         return collect($arrayName)
             ->map(
-                fn($value) => $modelClass::firstOrCreate(['name' => $value]
+                fn ($value) => $modelClass::firstOrCreate(['name' => $value]
                 )->id,
             );
     }

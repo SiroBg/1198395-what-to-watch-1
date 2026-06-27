@@ -19,18 +19,17 @@ class CommentController extends Controller
     /**
      * Создаёт отзыв о фильме или комментарий на существующий отзыв.
      *
-     * @param CreateCommentRequest $request Запрос из формы.
-     * @param Film                 $film Фильм.
-     *
+     * @param  CreateCommentRequest  $request  Запрос из формы.
+     * @param  Film  $film  Фильм.
      * @return Success Формат ответа.
      */
     public function store(CreateCommentRequest $request, Film $film)
     {
         $comment = Comment::create([
-            'film_id'    => $film->id,
-            'user_id'    => $request->user()->id,
-            'text'       => $request->safe()->text,
-            'rating'     => $request->safe()->rating,
+            'film_id' => $film->id,
+            'user_id' => $request->user()->id,
+            'text' => $request->safe()->text,
+            'rating' => $request->safe()->rating,
             'comment_id' => $request->safe()->comment_id,
         ]);
 
@@ -40,9 +39,8 @@ class CommentController extends Controller
     /**
      * Возвращает отзывы к фильму.
      *
-     * @param Film                 $film Фильм.
-     * @param GetFilmCommentsQuery $query Запрос.
-     *
+     * @param  Film  $film  Фильм.
+     * @param  GetFilmCommentsQuery  $query  Запрос.
      * @return Success Формат ответа.
      */
     public function show(Film $film, GetFilmCommentsQuery $query): Success
@@ -55,9 +53,8 @@ class CommentController extends Controller
     /**
      * Обновляет комментарий или отзыв к фильму.
      *
-     * @param UpdateCommentRequest $request Запрос из формы.
-     * @param Comment              $comment Комментарий.
-     *
+     * @param  UpdateCommentRequest  $request  Запрос из формы.
+     * @param  Comment  $comment  Комментарий.
      * @return Success Формат ответа.
      */
     public function update(
@@ -67,7 +64,7 @@ class CommentController extends Controller
         $this->authorize('update', $comment);
 
         $comment->update([
-            'text'   => $request->safe()->text,
+            'text' => $request->safe()->text,
             'rating' => $comment->comment_id ? null : $request->safe()->rating,
         ]);
 
@@ -77,10 +74,10 @@ class CommentController extends Controller
     /**
      * Удаляет комментарий или отзыв к фильму.
      *
-     * @param Comment             $comment Комментарий.
-     * @param DeleteCommentAction $action Действие.
-     *
+     * @param  Comment  $comment  Комментарий.
+     * @param  DeleteCommentAction  $action  Действие.
      * @return Success Формат ответа.
+     *
      * @throws \Throwable
      */
     public function destroy(

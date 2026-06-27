@@ -10,10 +10,10 @@ uses(RefreshDatabase::class);
 
 dataset('allowed users for deletion', [
     'автор комментария' => [
-        fn($comment) => User::find($comment->user_id),
+        fn ($comment) => User::find($comment->user_id),
     ],
-    'модератор'         => [
-        fn() => tap(User::factory()->create(), function ($user) {
+    'модератор' => [
+        fn () => tap(User::factory()->create(), function ($user) {
             $user->roles()->attach(Role::firstOrCreate(['name' => 'moderator'])
             );
         }),
@@ -25,7 +25,7 @@ describe('GET api/comments/{film} (show)', function () {
         $film = Film::factory()->create();
         Comment::factory()->count(3)->create(['film_id' => $film->id]);
 
-        $response = $this->getJson('/api/comments/' . $film->id);
+        $response = $this->getJson('/api/comments/'.$film->id);
 
         expect($response)->assertOk()
             ->assertJsonStructure([
@@ -39,7 +39,7 @@ describe('GET api/comments/{film} (show)', function () {
                         'updated_at',
                         'text',
                         'rating',
-                        'author'
+                        'author',
                     ],
                 ],
             ]);
@@ -50,17 +50,17 @@ describe('POST api/comments/{film} (store)', function () {
     test('пользователи могут создавать комментарии', function () {
         $film = Film::factory()->create();
         $commentData = [
-            'text'   => str_repeat('X', 100),
+            'text' => str_repeat('X', 100),
             'rating' => 1,
         ];
 
         expect(
-            $this->postJson('/api/comments/' . $film->id, $commentData)
+            $this->postJson('/api/comments/'.$film->id, $commentData)
         )->assertUnauthorized();
 
         $user = User::factory()->create();
         $authorizedResponse = $this->actingAs($user)->postJson(
-            '/api/comments/' . $film->id,
+            '/api/comments/'.$film->id,
             $commentData
         );
 
@@ -81,12 +81,12 @@ describe('PATCH api/comments/{comment} (update)', function () {
             $user = User::factory()->create();
             $comment = Comment::factory()->create(['user_id' => $user->id]);
             $expectedData = [
-                'text'   => str_repeat('X', 100),
+                'text' => str_repeat('X', 100),
                 'rating' => 1,
             ];
 
             $response = $this->actingAs($user)->patchJson(
-                '/api/comments/' . $comment->id,
+                '/api/comments/'.$comment->id,
                 $expectedData
             );
 
@@ -108,12 +108,12 @@ describe('PATCH api/comments/{comment} (update)', function () {
 
             $comment = Comment::factory()->create();
             $expectedData = [
-                'text'   => str_repeat('X', 100),
+                'text' => str_repeat('X', 100),
                 'rating' => 1,
             ];
 
             $patchResponse = $this->actingAs($moderator)->patchJson(
-                '/api/comments/' . $comment->id,
+                '/api/comments/'.$comment->id,
                 $expectedData
             );
 
@@ -134,7 +134,7 @@ describe('DELETE api/comments/{comment} (destroy)', function () {
             $user = $getUser($comment);
 
             $response = $this->actingAs($user)->delete(
-                '/api/comments/' . $comment->id
+                '/api/comments/'.$comment->id
             );
 
             expect($response)->assertOk();
@@ -149,9 +149,9 @@ test(
         $comment = Comment::factory()->create();
         $wrongUser = User::factory()->create();
 
-        $url = '/api/comments/' . $comment->id . $endpointSuffix;
+        $url = '/api/comments/'.$comment->id.$endpointSuffix;
         $response = $this->actingAs($wrongUser)->json($method, $url, [
-            'text'   => str_repeat('X', 100),
+            'text' => str_repeat('X', 100),
             'rating' => 5,
         ]);
 
@@ -159,6 +159,5 @@ test(
     }
 )->with([
     'при попытке обновления' => ['PATCH', ''],
-    'при попытке удаления'   => ['DELETE', ''],
+    'при попытке удаления' => ['DELETE', ''],
 ]);
-

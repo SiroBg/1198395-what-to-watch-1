@@ -23,9 +23,8 @@ class FilmController extends Controller
     /**
      * Возвращает список фильмов с пагинацией.
      *
-     * @param FilmIndexRequest $request Запрос из формы.
-     * @param FetchFilmsQuery  $query   Формат запроса.
-     *
+     * @param  FilmIndexRequest  $request  Запрос из формы.
+     * @param  FetchFilmsQuery  $query  Формат запроса.
      * @return Success Формат ответа.
      */
     public function index(
@@ -41,8 +40,7 @@ class FilmController extends Controller
      * Добавляет фильм в БД и создаёт фоновую задачу на обновление информации
      * о фильме.
      *
-     * @param CreateFilmRequest $request Запрос из формы.
-     *
+     * @param  CreateFilmRequest  $request  Запрос из формы.
      * @return Success Формат ответа.
      */
     public function store(CreateFilmRequest $request): Success
@@ -59,9 +57,8 @@ class FilmController extends Controller
     /**
      * Возвращает информацию о фильме.
      *
-     * @param Film                     $film Фильм.
-     * @param GetFilmWithMetadataQuery $query Запрос.
-     *
+     * @param  Film  $film  Фильм.
+     * @param  GetFilmWithMetadataQuery  $query  Запрос.
      * @return Success Формат ответа.
      */
     public function show(Film $film, GetFilmWithMetadataQuery $query): Success
@@ -76,10 +73,9 @@ class FilmController extends Controller
     /**
      * Обновляет информацию о фильме.
      *
-     * @param UpdateFilmRequest $request Запрос из формы.
-     * @param Film              $film Фильм.
-     * @param SaveFilmAction    $action Действие.
-     *
+     * @param  UpdateFilmRequest  $request  Запрос из формы.
+     * @param  Film  $film  Фильм.
+     * @param  SaveFilmAction  $action  Действие.
      * @return Success Формат ответа.
      */
     public function update(
@@ -97,9 +93,8 @@ class FilmController extends Controller
     /**
      * Возвращает 4 похожих фильма.
      *
-     * @param Film                 $film Фильм.
-     * @param GetSimilarFilmsQuery $query Запрос.
-     *
+     * @param  Film  $film  Фильм.
+     * @param  GetSimilarFilmsQuery  $query  Запрос.
      * @return Success Формат ответа.
      */
     public function similar(Film $film, GetSimilarFilmsQuery $query): Success
@@ -112,8 +107,7 @@ class FilmController extends Controller
     /**
      * Возвращает промо фильм.
      *
-     * @param GetFilmWithMetadataQuery $query Запрос.
-     *
+     * @param  GetFilmWithMetadataQuery  $query  Запрос.
      * @return Success Формат ответа.
      */
     public function promo(GetFilmWithMetadataQuery $query): Success
@@ -129,8 +123,7 @@ class FilmController extends Controller
     /**
      * Устанавливает промо фильм.
      *
-     * @param Film $film Фильм.
-     *
+     * @param  Film  $film  Фильм.
      * @return Success Формат ответа.
      */
     public function setPromo(Film $film): Success

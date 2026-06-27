@@ -23,8 +23,6 @@ class Role extends Model
 
     /**
      * Возвращает пользователей с данной ролью.
-     *
-     * @return BelongsToMany
      */
     public function users(): BelongsToMany
     {

@@ -10,8 +10,6 @@ final class CreateFilmRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -20,8 +18,6 @@ final class CreateFilmRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -29,7 +25,7 @@ final class CreateFilmRequest extends FormRequest
             'imdb_id' => [
                 'required',
                 'regex:/^tt\d+$/',
-                Rule::unique(Film::class, 'imdb_id')
+                Rule::unique(Film::class, 'imdb_id'),
             ],
         ];
     }

@@ -10,15 +10,15 @@ uses(RefreshDatabase::class);
 
 dataset('film access matrix', [
     'неавторизованный гость получает 401' => [
-        'user'   => fn() => null,
+        'user' => fn () => null,
         'status' => 401,
     ],
-    'обычный пользователь получает 403'   => [
-        'user'   => fn() => User::factory()->create(),
+    'обычный пользователь получает 403' => [
+        'user' => fn () => User::factory()->create(),
         'status' => 403,
     ],
     'модератор успешно проходит проверку' => [
-        'user'   => function () {
+        'user' => function () {
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);
@@ -42,7 +42,7 @@ describe('GET api/films (index)', function () {
                         'id',
                         'name',
                         'preview_image',
-                        'preview_video_link'
+                        'preview_video_link',
                     ],
                 ],
             ]);
@@ -53,7 +53,7 @@ describe('GET api/films/{film} (show)', function () {
     test('возвращает правильную структуру для одного фильма', function () {
         $film = Film::factory()->create();
 
-        $response = $this->getJson('/api/films/' . $film->id);
+        $response = $this->getJson('/api/films/'.$film->id);
 
         expect($response)->assertOk()
             ->assertJsonStructure([
@@ -111,14 +111,14 @@ describe('PATCH api/films/{film} (index)', function () {
             $film = Film::factory()->create();
             $expectedData = [
                 'imdb_id' => 'tt1234567',
-                'name'    => 'Titanic',
-                'status'  => 'ready',
+                'name' => 'Titanic',
+                'status' => 'ready',
             ];
             $resolvedUser = $user();
 
             $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
             $response = $request->patchJson(
-                '/api/films/' . $film->id,
+                '/api/films/'.$film->id,
                 $expectedData
             );
 

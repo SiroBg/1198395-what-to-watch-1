@@ -34,8 +34,7 @@ class FavoriteController extends Controller
     /**
      * Добавляет фильм в избранное.
      *
-     * @param Film $film Фильм.
-     *
+     * @param  Film  $film  Фильм.
      * @return Success Формат ответа.
      */
     public function store(Film $film): Success
@@ -58,8 +57,7 @@ class FavoriteController extends Controller
     /**
      * Удаляет фильм из избранного.
      *
-     * @param Film $film Фильм.
-     *
+     * @param  Film  $film  Фильм.
      * @return Success Формат ответа.
      */
     public function destroy(Film $film): Success
@@ -70,7 +68,7 @@ class FavoriteController extends Controller
             ->where('film_id', $film->id)
             ->exists();
 
-        if (!$alreadyFavorited) {
+        if (! $alreadyFavorited) {
             abort(422, 'Фильм не находится в избранном');
         }
 

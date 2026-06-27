@@ -10,9 +10,7 @@ final class GetFilmCommentsQuery
     /**
      * Возвращает отзывы к фильму.
      *
-     * @param Film $film Фильм.
-     *
-     * @return Collection
+     * @param  Film  $film  Фильм.
      */
     public function execute(Film $film): Collection
     {

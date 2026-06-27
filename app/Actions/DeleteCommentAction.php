@@ -9,9 +9,9 @@ final class DeleteCommentAction
 {
     /**
      * Удаляет комментарий и ответы под ним.
-     * @param Comment $comment Комментарий для удаления.
      *
-     * @return void
+     * @param  Comment  $comment  Комментарий для удаления.
+     *
      * @throws \Throwable
      */
     public function execute(Comment $comment): void

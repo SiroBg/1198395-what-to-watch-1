@@ -11,11 +11,9 @@ final class UpdateUserAction
     /**
      * Обновляет информацию о пользователе.
      *
-     * @param User              $user Пользователь.
-     * @param array             $data Данные формы.
-     * @param UploadedFile|null $file Аватарка.
-     *
-     * @return User
+     * @param  User  $user  Пользователь.
+     * @param  array  $data  Данные формы.
+     * @param  UploadedFile|null  $file  Аватарка.
      */
     public function execute(
         User $user,

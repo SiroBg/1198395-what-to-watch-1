@@ -11,8 +11,6 @@ final class CreateCommentRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -21,19 +19,17 @@ final class CreateCommentRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'text'       => [
+            'text' => [
                 'required',
                 'string',
                 'min:50',
                 'max:400',
             ],
-            'rating'     => [
+            'rating' => [
                 'nullable',
                 'integer',
                 'min:1',
@@ -52,10 +48,6 @@ final class CreateCommentRequest extends FormRequest
 
     /**
      * Валидатор отзывов и комментариев.
-     *
-     * @param $validator
-     *
-     * @return void
      */
     public function withValidator($validator): void
     {
@@ -64,7 +56,7 @@ final class CreateCommentRequest extends FormRequest
             if ($commentId) {
                 $comment = Comment::find($commentId);
 
-                if (!$comment) {
+                if (! $comment) {
                     $validator->errors()->add(
                         'comment_id',
                         'Комментарий не найден.'

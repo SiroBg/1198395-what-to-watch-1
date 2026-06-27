@@ -10,8 +10,6 @@ final class RegisterUserRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -20,14 +18,12 @@ final class RegisterUserRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'name'     => 'required|string|max:255',
-            'email'    => [
+            'name' => 'required|string|max:255',
+            'email' => [
                 'required',
                 'string',
                 'email',
@@ -40,7 +36,7 @@ final class RegisterUserRequest extends FormRequest
                 'min:8',
                 'confirmed',
             ],
-            'file'     => 'nullable|image|max:10240',
+            'file' => 'nullable|image|max:10240',
         ];
     }
 }

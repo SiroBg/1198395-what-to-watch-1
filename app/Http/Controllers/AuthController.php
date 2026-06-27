@@ -19,10 +19,10 @@ class AuthController extends Controller
     /**
      * Регистрирует пользователя.
      *
-     * @param RegisterUserRequest $request Запрос из формы.
-     * @param RegisterUserAction  $action Действие.
-     *
+     * @param  RegisterUserRequest  $request  Запрос из формы.
+     * @param  RegisterUserAction  $action  Действие.
      * @return Success Формат ответа.
+     *
      * @throws \Throwable
      */
     public function register(
@@ -40,13 +40,12 @@ class AuthController extends Controller
     /**
      * Логинит пользователя.
      *
-     * @param LoginRequest $request Запрос из формы.
-     *
+     * @param  LoginRequest  $request  Запрос из формы.
      * @return Success Формат ответа.
      */
     public function login(LoginRequest $request): Success
     {
-        if (!Auth::attempt($request->validated())) {
+        if (! Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
         }
 

@@ -17,10 +17,10 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'text'       => fake()->paragraph(),
-            'rating'     => fake()->numberBetween(1, 10),
-            'user_id'    => User::factory(),
-            'film_id'    => Film::factory(),
+            'text' => fake()->paragraph(),
+            'rating' => fake()->numberBetween(1, 10),
+            'user_id' => User::factory(),
+            'film_id' => Film::factory(),
             'comment_id' => null,
         ];
     }
@@ -30,7 +30,7 @@ class CommentFactory extends Factory
      */
     public function guest(): CommentFactory
     {
-        return $this->state(fn(array $_attributes) => [
+        return $this->state(fn (array $_attributes) => [
             'user_id' => null,
         ]);
     }

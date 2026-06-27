@@ -19,11 +19,11 @@ describe('POST api/register (register)', function () {
         expect(User::count())->toBe(0);
 
         $response = postJson('/api/register', [
-            'name'                  => 'John Doe',
-            'email'                 => 'john@example.com',
-            'password'              => 'password123',
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'password123',
             'password_confirmation' => 'password123',
-            'file'                  => UploadedFile::fake()->image(
+            'file' => UploadedFile::fake()->image(
                 'avatar.jpg'
             ),
         ]);
@@ -55,14 +55,14 @@ describe('POST api/login (login)', function () {
         ]);
 
         $user = User::factory()->create([
-            'email'    => 'john@example.com',
+            'email' => 'john@example.com',
             'password' => Hash::make('password123'),
         ]);
 
         $user->roles()->attach($role);
 
         $response = postJson('/api/login', [
-            'email'    => 'john@example.com',
+            'email' => 'john@example.com',
             'password' => 'password123',
         ]);
 
@@ -79,12 +79,12 @@ describe('POST api/login (login)', function () {
 
     it('возвращает ошибку 401 с неправильными данными', function () {
         User::factory()->create([
-            'email'    => 'john@example.com',
+            'email' => 'john@example.com',
             'password' => Hash::make('password123'),
         ]);
 
         postJson('/api/login', [
-            'email'    => 'john@example.com',
+            'email' => 'john@example.com',
             'password' => 'wrong-password',
         ])->assertUnauthorized();
     });
@@ -97,7 +97,7 @@ describe('POST api/logout (logout)', function () {
         $token = $user->createToken('auth-token');
 
         postJson('/api/logout', [], [
-            'Authorization' => 'Bearer ' . $token->plainTextToken,
+            'Authorization' => 'Bearer '.$token->plainTextToken,
         ])
             ->assertOk();
 

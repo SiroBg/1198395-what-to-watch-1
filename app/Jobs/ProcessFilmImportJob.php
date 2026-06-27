@@ -24,21 +24,19 @@ final class ProcessFilmImportJob implements ShouldQueue
     /**
      * Создаёт задачу на обработку фильма.
      *
-     * @param string $imdbId Imdb id фильма.
+     * @param  string  $imdbId  Imdb id фильма.
      */
     public function __construct(
         protected string $imdbId,
-    ) {
-    }
+    ) {}
 
     /**
      * Обращается к репозиторию с фильмами и обновляет информацию о фильме.
      *
-     * @param FilmsRepositoryInterface $filmRepository Репозиторий для обращения за информацией о фильме.
-     * @param SaveFilmAction           $saveFilmAction Действие сохранения фильма.
-     * @param OmdbDataConverter        $converter      Конвертер данных в нужный формат.
+     * @param  FilmsRepositoryInterface  $filmRepository  Репозиторий для обращения за информацией о фильме.
+     * @param  SaveFilmAction  $saveFilmAction  Действие сохранения фильма.
+     * @param  OmdbDataConverter  $converter  Конвертер данных в нужный формат.
      *
-     * @return void
      * @throws \Throwable
      */
     public function handle(

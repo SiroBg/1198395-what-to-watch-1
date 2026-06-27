@@ -9,13 +9,11 @@ final class UpdateCommentRequest extends FormRequest
 {
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'text'   => [
+            'text' => [
                 'required',
                 'string',
                 'min:50',
@@ -32,10 +30,6 @@ final class UpdateCommentRequest extends FormRequest
 
     /**
      * Валидатор отзывов и комментариев.
-     *
-     * @param $validator
-     *
-     * @return void
      */
     public function withValidator($validator): void
     {

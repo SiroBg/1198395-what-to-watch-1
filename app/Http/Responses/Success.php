@@ -11,8 +11,8 @@ final class Success extends Base
     /**
      * Создаёт экземпляр успешного ответа сервера.
      *
-     * @param mixed $data Данные ответа.
-     * @param int   $statusCode Статус-код.
+     * @param  mixed  $data  Данные ответа.
+     * @param  int  $statusCode  Статус-код.
      */
     public function __construct(
         mixed $data = [],

@@ -13,11 +13,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @psalm-api
  *
- * @property int                        $id
- * @property string                     $name
- * @property float|int|null             $rating
- * @property int|null                   $scores_count
- * @property bool|int|null              $is_favorite
+ * @property int $id
+ * @property string $name
+ * @property float|int|null $rating
+ * @property int|null $scores_count
+ * @property bool|int|null $is_favorite
  * @property-read Collection|Director[] $directors
  * @property-read Collection|Actor[]    $actors
  * @property-read Collection|Genre[]    $genres
@@ -31,7 +31,7 @@ class Film extends Model
         = [
             'run_time' => 'int',
             'released' => 'int',
-            'status'   => FilmStatus::class,
+            'status' => FilmStatus::class,
         ];
 
     protected $hidden
@@ -58,8 +58,6 @@ class Film extends Model
 
     /**
      * Возвращает жанры фильма.
-     *
-     * @return BelongsToMany
      */
     public function genres(): BelongsToMany
     {
@@ -68,8 +66,6 @@ class Film extends Model
 
     /**
      * Возвращает список актёров, снимавшихся в фильме.
-     *
-     * @return BelongsToMany
      */
     public function actors(): BelongsToMany
     {
@@ -78,8 +74,6 @@ class Film extends Model
 
     /**
      * Возвращает список режиссёров фильма.
-     *
-     * @return BelongsToMany
      */
     public function directors(): BelongsToMany
     {
@@ -88,8 +82,6 @@ class Film extends Model
 
     /**
      * Возвращает список пользователей, добавивших фильм в избранное.
-     *
-     * @return BelongsToMany
      */
     public function favoritedBy(): BelongsToMany
     {
@@ -103,8 +95,6 @@ class Film extends Model
 
     /**
      * Возвращает отзывы к фильму.
-     *
-     * @return HasMany
      */
     public function comments(): HasMany
     {
@@ -114,17 +104,14 @@ class Film extends Model
     /**
      * Добавляет фильтр жанра к запросу.
      *
-     * @param          $query
-     * @param int|null $genreId Id Жанра.
-     *
-     * @return mixed
+     * @param  int|null  $genreId  Id Жанра.
      */
     public function scopeGenre(
         $query,
         ?int $genreId
     ): mixed {
         return $genreId
-            ? $query->whereHas('genres', fn($q) => $q->whereKey($genreId))
+            ? $query->whereHas('genres', fn ($q) => $q->whereKey($genreId))
             : $query;
     }
 
@@ -132,35 +119,29 @@ class Film extends Model
      * Добавляет к запросу поле is_favorite (добавлен ли фильм в избранное
      * пользователем).
      *
-     * @param          $query
-     * @param int|null $userId Id пользователя.
-     *
-     * @return mixed
+     * @param  int|null  $userId  Id пользователя.
      */
     public function scopeWithIsFavorite($query, ?int $userId): mixed
     {
-        if (!$userId) {
+        if (! $userId) {
             return $query->selectRaw('0 as is_favorite');
         }
 
         return $query->withExists([
             'favoritedBy as is_favorite' => function ($q) use ($userId) {
                 $q->where('user_id', $userId);
-            }
+            },
         ]);
     }
 
     /**
      * Добавляет фильтр по статусу фильма.
      *
-     * @param             $query
-     * @param string|null $status Статус.
-     *
-     * @return mixed
+     * @param  string|null  $status  Статус.
      */
     public function scopeStatus($query, ?string $status): mixed
     {
-        if (!$status) {
+        if (! $status) {
             $status = FilmStatus::READY->value;
         }
 
@@ -169,10 +150,6 @@ class Film extends Model
 
     /**
      * Добавляет к запросу поле rating (среднее значение по всем отзывам).
-     *
-     * @param $query
-     *
-     * @return mixed
      */
     public function scopeWithRating($query): mixed
     {
@@ -182,11 +159,8 @@ class Film extends Model
     /**
      * Добавляет фильтр сортировки по полю и направлению.
      *
-     * @param        $query
-     * @param string $field     Поле (order_by).
-     * @param string $direction Направление (order_to).
-     *
-     * @return mixed
+     * @param  string  $field  Поле (order_by).
+     * @param  string  $direction  Направление (order_to).
      */
     public function scopeSorting(
         $query,

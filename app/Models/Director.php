@@ -28,8 +28,6 @@ class Director extends Model
 
     /**
      * Возвращает список фильмов, снятых режиссёром.
-     *
-     * @return BelongsToMany
      */
     public function films(): BelongsToMany
     {

@@ -28,9 +28,8 @@ class UserController extends Controller
     /**
      * Обновляет информацию об авторизованном пользователе.
      *
-     * @param UpdateUserRequest $request Запрос из формы.
-     * @param UpdateUserAction  $action  Действие.
-     *
+     * @param  UpdateUserRequest  $request  Запрос из формы.
+     * @param  UpdateUserAction  $action  Действие.
      * @return Success Формат ответа.
      */
     public function update(

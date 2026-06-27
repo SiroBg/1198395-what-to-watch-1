@@ -28,8 +28,6 @@ class Genre extends Model
 
     /**
      * Возвращает список фильмов с этим жанром.
-     *
-     * @return BelongsToMany
      */
     public function films(): BelongsToMany
     {

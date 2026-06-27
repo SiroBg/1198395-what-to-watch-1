@@ -10,33 +10,29 @@ final class OmdbDataConverter
     /**
      * Создаёт конвертер данных от omdb api.
      *
-     * @param array $omdbData Данные.
-     *
-     * @return array
+     * @param  array  $omdbData  Данные.
      */
     public function convert(array $omdbData): array
     {
         return [
-            'name'         => $omdbData['Title'] ?? null,
-            'description'  => $omdbData['Plot'] ?? null,
-            'released'     => $this->parseReleaseYear(
+            'name' => $omdbData['Title'] ?? null,
+            'description' => $omdbData['Plot'] ?? null,
+            'released' => $this->parseReleaseYear(
                 $omdbData['Released'] ?? $omdbData['Year'] ?? null
             ),
             'poster_image' => $omdbData['Poster'] ?? null,
 
-            'starring'  => $this->parseOmdbString($omdbData['Actors'] ?? ''),
+            'starring' => $this->parseOmdbString($omdbData['Actors'] ?? ''),
             'directors' => $this->parseOmdbString($omdbData['Director'] ?? ''),
-            'genres'    => $this->parseOmdbString($omdbData['Genre'] ?? ''),
-            'run_time'  => $this->parseRuntime($omdbData['Runtime'] ?? null),
+            'genres' => $this->parseOmdbString($omdbData['Genre'] ?? ''),
+            'run_time' => $this->parseRuntime($omdbData['Runtime'] ?? null),
         ];
     }
 
     /**
      * Парсит строку в массив.
      *
-     * @param string $string Строка.
-     *
-     * @return array
+     * @param  string  $string  Строка.
      */
     private function parseOmdbString(string $string): array
     {
@@ -45,7 +41,7 @@ final class OmdbDataConverter
         }
 
         $items = Str::of($string)->explode(',')
-            ->map(fn($item) => trim($item))
+            ->map(fn ($item) => trim($item))
             ->filter()->toArray();
 
         return array_values($items);
@@ -54,21 +50,19 @@ final class OmdbDataConverter
     /**
      * Парсит год выпуска в int.
      *
-     * @param string|null $date Дата.
-     *
-     * @return int|null
+     * @param  string|null  $date  Дата.
      */
     private function parseReleaseYear(?string $date): ?int
     {
-        if (!$date || $date === 'N/A') {
+        if (! $date || $date === 'N/A') {
             return null;
         }
 
         try {
-            return (int)Carbon::parse($date)->format('Y');
+            return (int) Carbon::parse($date)->format('Y');
         } catch (\Exception $e) {
             if (preg_match('/\b\d{4}\b/', $date, $matches)) {
-                return (int)$matches[0];
+                return (int) $matches[0];
             }
 
             return null;
@@ -77,17 +71,13 @@ final class OmdbDataConverter
 
     /**
      * Парсит длительность фильма в int.
-     *
-     * @param string|null $runtime
-     *
-     * @return int|null
      */
     private function parseRuntime(?string $runtime): ?int
     {
-        if (!$runtime) {
+        if (! $runtime) {
             return null;
         }
 
-        return (int)Str::before($runtime, ' ');
+        return (int) Str::before($runtime, ' ');
     }
 }

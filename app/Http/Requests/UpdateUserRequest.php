@@ -11,8 +11,6 @@ final class UpdateUserRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -21,18 +19,16 @@ final class UpdateUserRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'name'     => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'email'    => [
+            'email' => [
                 'required',
                 'string',
                 'email',
@@ -45,7 +41,7 @@ final class UpdateUserRequest extends FormRequest
                 'min:8',
                 'confirmed',
             ],
-            'file'     => [
+            'file' => [
                 'sometimes',
                 'nullable',
                 'image',

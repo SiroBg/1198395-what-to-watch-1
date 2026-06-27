@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class Base implements Responsable
@@ -15,8 +16,8 @@ abstract class Base implements Responsable
     /**
      * Создаёт ответ.
      *
-     * @param mixed $data Данные ответа.
-     * @param int   $statusCode Статус-код ответа.
+     * @param  mixed  $data  Данные ответа.
+     * @param  int  $statusCode  Статус-код ответа.
      */
     public function __construct(
         mixed $data = [],
@@ -27,22 +28,16 @@ abstract class Base implements Responsable
     }
 
     /**
-     * @inheritDoc
-     *
-     * @param $request
-     *
-     * @return \Illuminate\Http\JsonResponse|Response
+     * {@inheritDoc}
      */
     #[\Override]
-    public function toResponse($request): \Illuminate\Http\JsonResponse|Response
+    public function toResponse($request): JsonResponse|Response
     {
         return response()->json($this->makeResponseData(), $this->statusCode);
     }
 
     /**
      * Подготавливает данные.
-     *
-     * @return array
      */
     protected function prepareData(): array
     {
@@ -50,13 +45,11 @@ abstract class Base implements Responsable
             return $this->data->toArray();
         }
 
-        return (array)$this->data;
+        return (array) $this->data;
     }
 
     /**
      * Создаёт данные ответа.
-     *
-     * @return array|null
      */
     abstract protected function makeResponseData(): ?array;
 }

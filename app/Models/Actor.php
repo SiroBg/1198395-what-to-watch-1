@@ -28,8 +28,6 @@ class Actor extends Model
 
     /**
      * Возвращает фильмы, в которых снимался актёр.
-     *
-     * @return BelongsToMany
      */
     public function films(): BelongsToMany
     {

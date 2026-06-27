@@ -3,37 +3,37 @@
 use App\Services\OmdbDataConverter;
 
 beforeEach(function () {
-    $this->converter = new OmdbDataConverter();
+    $this->converter = new OmdbDataConverter;
 });
 
 describe('OmdbDataConverter: Базовая конвертация', function () {
     it('успешно конвертирует полный массив данных от OMDB API', function () {
         $omdbData = [
-            'Title'    => 'Inception',
-            'Plot'     => 'A thief who steals corporate secrets...',
+            'Title' => 'Inception',
+            'Plot' => 'A thief who steals corporate secrets...',
             'Released' => '16 Jul 2010',
-            'Poster'   => 'https://example.com',
-            'Actors'   => 'Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page',
+            'Poster' => 'https://example.com',
+            'Actors' => 'Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page',
             'Director' => 'Christopher Nolan',
-            'Genre'    => 'Action, Sci-Fi, Thriller',
-            'Runtime'  => '148 min',
+            'Genre' => 'Action, Sci-Fi, Thriller',
+            'Runtime' => '148 min',
         ];
 
         $result = $this->converter->convert($omdbData);
 
         expect($result)->toBe([
-            'name'         => 'Inception',
-            'description'  => 'A thief who steals corporate secrets...',
-            'released'     => 2010,
+            'name' => 'Inception',
+            'description' => 'A thief who steals corporate secrets...',
+            'released' => 2010,
             'poster_image' => 'https://example.com',
-            'starring'     => [
+            'starring' => [
                 'Leonardo DiCaprio',
                 'Joseph Gordon-Levitt',
-                'Elliot Page'
+                'Elliot Page',
             ],
-            'directors'    => ['Christopher Nolan'],
-            'genres'       => ['Action', 'Sci-Fi', 'Thriller'],
-            'run_time'     => 148,
+            'directors' => ['Christopher Nolan'],
+            'genres' => ['Action', 'Sci-Fi', 'Thriller'],
+            'run_time' => 148,
         ]);
     });
 
@@ -43,14 +43,14 @@ describe('OmdbDataConverter: Базовая конвертация', function ()
             $result = $this->converter->convert([]);
 
             expect($result)->toBe([
-                'name'         => null,
-                'description'  => null,
-                'released'     => null,
+                'name' => null,
+                'description' => null,
+                'released' => null,
                 'poster_image' => null,
-                'starring'     => [],
-                'directors'    => [],
-                'genres'       => [],
-                'run_time'     => null,
+                'starring' => [],
+                'directors' => [],
+                'genres' => [],
+                'run_time' => null,
             ]);
         }
     );
@@ -76,9 +76,9 @@ describe(
             'возвращает пустой массив, если в OMDB пришло значение N/A',
             function () {
                 $omdbData = [
-                    'Actors'   => 'N/A',
+                    'Actors' => 'N/A',
                     'Director' => 'N/A',
-                    'Genre'    => 'N/A',
+                    'Genre' => 'N/A',
                 ];
 
                 $result = $this->converter->convert($omdbData);

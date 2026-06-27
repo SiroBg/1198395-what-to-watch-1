@@ -18,18 +18,18 @@ class FilmFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'               => fake()->word(),
-            'poster_image'       => fake()->imageUrl(),
-            'preview_image'      => fake()->imageUrl(),
-            'background_image'   => fake()->imageUrl(),
-            'background_color'   => fake()->hexColor(),
-            'video_link'         => fake()->url(),
+            'name' => fake()->word(),
+            'poster_image' => fake()->imageUrl(),
+            'preview_image' => fake()->imageUrl(),
+            'background_image' => fake()->imageUrl(),
+            'background_color' => fake()->hexColor(),
+            'video_link' => fake()->url(),
             'preview_video_link' => fake()->url(),
-            'description'        => fake()->text(),
-            'run_time'           => fake()->numberBetween(1, 1000),
-            'released'           => fake()->numberBetween(1930, 2026),
-            'imdb_id'            => fake()->regexify('tt[0-9]{7}'),
-            'status'             => fake()->randomElement(FilmStatus::cases()),
+            'description' => fake()->text(),
+            'run_time' => fake()->numberBetween(1, 1000),
+            'released' => fake()->numberBetween(1930, 2026),
+            'imdb_id' => fake()->regexify('tt[0-9]{7}'),
+            'status' => fake()->randomElement(FilmStatus::cases()),
         ];
     }
 }

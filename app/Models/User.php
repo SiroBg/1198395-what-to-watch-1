@@ -23,6 +23,7 @@ class User extends Authenticatable
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use Notifiable;
 
     protected $hidden
@@ -45,14 +46,12 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
     /**
      * Возвращает роль пользователя.
-     *
-     * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
@@ -61,8 +60,6 @@ class User extends Authenticatable
 
     /**
      * Возвращает список избранных фильмов.
-     *
-     * @return BelongsToMany
      */
     public function favoriteFilms(): BelongsToMany
     {
@@ -76,8 +73,6 @@ class User extends Authenticatable
 
     /**
      * Возвращает все отзывы/комментарии пользователя.
-     *
-     * @return HasMany
      */
     public function comments(): HasMany
     {
@@ -87,9 +82,7 @@ class User extends Authenticatable
     /**
      * Проверяет наличие роли у пользователя.
      *
-     * @param string $role Роль.
-     *
-     * @return bool
+     * @param  string  $role  Роль.
      */
     public function hasRole(string $role): bool
     {

@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @psalm-api
  *
- * @property int            $id
- * @property string         $text
- * @property string         $author_name
+ * @property int $id
+ * @property string $text
+ * @property string $author_name
  * @property-read User|null $user
  */
 class Comment extends Model
@@ -24,7 +24,7 @@ class Comment extends Model
 
     protected $casts
         = [
-            'rating'     => 'int',
+            'rating' => 'int',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
@@ -42,8 +42,6 @@ class Comment extends Model
 
     /**
      * Возвращает автора отзыва.
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -52,8 +50,6 @@ class Comment extends Model
 
     /**
      * Возвращает фильм, к которому относится отзыв.
-     *
-     * @return BelongsTo
      */
     public function film(): BelongsTo
     {
@@ -62,8 +58,6 @@ class Comment extends Model
 
     /**
      * Возвращает отзыв, к которому относится комментарий.
-     *
-     * @return BelongsTo
      */
     public function comment(): BelongsTo
     {
@@ -72,8 +66,6 @@ class Comment extends Model
 
     /**
      * Возвращает ответы на отзыв.
-     *
-     * @return HasMany
      */
     public function replies(): HasMany
     {
@@ -82,13 +74,11 @@ class Comment extends Model
 
     /**
      * Возвращает имя автора комментария.
-     *
-     * @return Attribute
      */
     public function authorName(): Attribute
     {
         return Attribute::get(
-            fn() => $this->user ? $this->user->name : 'Гость',
+            fn () => $this->user ? $this->user->name : 'Гость',
         );
     }
 }

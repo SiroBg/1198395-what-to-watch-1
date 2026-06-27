@@ -11,8 +11,6 @@ final class FilmIndexRequest extends FormRequest
 {
     /**
      * Проверяет авторизацию пользователя.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -21,20 +19,18 @@ final class FilmIndexRequest extends FormRequest
 
     /**
      * Правила валидации.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
-            'page'     => ['sometimes', 'integer', 'min:1'],
-            'genre'    => [
+            'page' => ['sometimes', 'integer', 'min:1'],
+            'genre' => [
                 'sometimes',
                 'nullable',
                 'integer',
-                Rule::exists('genres', 'id')
+                Rule::exists('genres', 'id'),
             ],
-            'status'   => ['sometimes', Rule::enum(FilmStatus::class)],
+            'status' => ['sometimes', Rule::enum(FilmStatus::class)],
             'order_by' => ['sometimes', Rule::in(['released', 'rating'])],
             'order_to' => ['sometimes', Rule::in(['asc', 'desc'])],
         ];
@@ -42,10 +38,6 @@ final class FilmIndexRequest extends FormRequest
 
     /**
      * Валидатор статуса фильма.
-     *
-     * @param Validator $validator
-     *
-     * @return void
      */
     public function withValidator(Validator $validator): void
     {
@@ -58,7 +50,7 @@ final class FilmIndexRequest extends FormRequest
                     $status,
                     [FilmStatus::PENDING->value, FilmStatus::MODERATION->value]
                 )
-                && (!$user || !$user->hasRole('moderator'))
+                && (! $user || ! $user->hasRole('moderator'))
             ) {
                 $validator->errors()->add(
                     'status',

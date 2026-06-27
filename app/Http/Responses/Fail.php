@@ -19,9 +19,9 @@ class Fail extends Base
     /**
      * Создаёт экземпляр ответа ошибки сервера.
      *
-     * @param Throwable $exception Исключение.
-     * @param int       $statusCode Статус-код.
-     * @param array     $errors Ошибки (при валидации).
+     * @param  Throwable  $exception  Исключение.
+     * @param  int  $statusCode  Статус-код.
+     * @param  array  $errors  Ошибки (при валидации).
      */
     public function __construct(
         Throwable $exception,
@@ -48,11 +48,9 @@ class Fail extends Base
     /**
      * Создаёт ответ-ошибку из исключения.
      *
-     * @param Throwable $e Исключение.
-     * @param int       $status Статус-код.
-     * @param array     $errors Ошибки.
-     *
-     * @return self
+     * @param  Throwable  $e  Исключение.
+     * @param  int  $status  Статус-код.
+     * @param  array  $errors  Ошибки.
      */
     public static function fromException(
         Throwable $e,
@@ -67,7 +65,7 @@ class Fail extends Base
     protected function makeResponseData(): ?array
     {
         $response['message'] = $this->message;
-        if (!empty($this->errors)) {
+        if (! empty($this->errors)) {
             $response['errors'] = $this->errors;
         }
 
