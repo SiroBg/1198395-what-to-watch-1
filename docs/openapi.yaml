@@ -1,0 +1,329 @@
+openapi: 3.0.0
+
+info:
+  title: What to watch API
+  version: 1.0.0
+  description: API для фильмов, пользователей, комментариев, избранного и промо
+
+servers:
+  - url: http://localhost/api
+
+# ================= SECURITY =================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        file:
+          type: string
+          nullable: true
+        role:
+          type: string
+          nullable: true
+
+    FilmPreview:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        preview_image:
+          type: string
+          nullable: true
+        preview_video_link:
+          type: string
+          nullable: true
+
+    Film:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        poster_image:
+          type: string
+        preview_image:
+          type: string
+        background_image:
+          type: string
+        background_color:
+          type: string
+        video_link:
+          type: string
+        preview_video_link:
+          type: string
+        rating:
+          type: number
+        scores_count:
+          type: integer
+        run_time:
+          type: integer
+        released:
+          type: integer
+        genres:
+          type: array
+          items:
+            type: string
+        directors:
+          type: array
+          items:
+            type: string
+        starring:
+          type: array
+          items:
+            type: string
+        is_favorite:
+          type: boolean
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        film_id:
+          type: integer
+        comment_id:
+          type: integer
+          nullable: true
+        text:
+          type: string
+        rating:
+          type: integer
+          nullable: true
+        author:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+# ================= PATHS =================
+paths:
+
+  # ================= AUTH =================
+  /register:
+    post:
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, password_confirmation]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
+      responses:
+        "201":
+          description: Created
+
+  /login:
+    post:
+      summary: Логин пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Token returned
+
+  /logout:
+    post:
+      summary: Logout пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logged out
+
+  # ================= USER =================
+  /user:
+    get:
+      summary: Текущий пользователь
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User data
+
+    patch:
+      summary: Обновление пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Updated user
+
+  # ================= FILMS =================
+  /films:
+    get:
+      summary: Список фильмов
+      responses:
+        "200":
+          description: OK
+
+    post:
+      summary: Создать фильм
+      responses:
+        "201":
+          description: Created
+
+  /films/{film}:
+    get:
+      summary: Детальный фильм
+      parameters:
+        - name: film
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Film
+
+    patch:
+      summary: Обновить фильм
+      parameters:
+        - name: film
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Updated
+
+  /films/{film}/similar:
+    get:
+      summary: Похожие фильмы (4 случайных из того же жанра)
+      parameters:
+        - name: film
+          in: path
+          required: true
+      responses:
+        "200":
+          description: List of films
+
+  # ================= FAVORITES =================
+  /favorite:
+    get:
+      summary: Избранные фильмы пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+
+  /films/{film}/favorite:
+    post:
+      summary: Добавить в избранное
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Added
+
+    delete:
+      summary: Удалить из избранного
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Removed
+
+  # ================= COMMENTS =================
+  /comments/{film}:
+    get:
+      summary: Комментарии фильма
+      responses:
+        "200":
+          description: OK
+
+    post:
+      summary: Создать комментарий или отзыв
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /comments/{comment}:
+    patch:
+      summary: Обновить комментарий
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Updated
+
+    delete:
+      summary: Удалить комментарий
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Deleted
+
+  # ================= GENRES =================
+  /genres:
+    get:
+      summary: Список жанров
+      responses:
+        "200":
+          description: OK
+
+  /genres/{genre}:
+    patch:
+      summary: Обновить жанр
+      responses:
+        "200":
+          description: Updated
+
+  # ================= PROMO =================
+  /promo:
+    get:
+      summary: Получить промо фильм
+      responses:
+        "200":
+          description: OK
+
+  /promo/{film}:
+    post:
+      summary: Установить промо фильм (moderator only)
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
