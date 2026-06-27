@@ -1,14 +1,12 @@
 <?php
 
 use App\Jobs\ProcessFilmImportJob;
-use App\Models\Genre;
 use App\Repositories\FilmsRepositories\FilmsRepositoryInterface;
 use Illuminate\Support\Facades\Queue;
 
-test('задача успешно парсит данные о фильме, сохраняет в бд и ставит задачу в очередь', function () {
+test('задача успешно парсит данные о фильме, сохраняет в бд и ставит задачу в очередь',
+function () {
     Queue::fake();
-
-    $genre = Genre::factory()->create(['name' => 'Sci-Fi']);
 
     $imdbId = 'tt3896198';
     $mockApiResponse = [

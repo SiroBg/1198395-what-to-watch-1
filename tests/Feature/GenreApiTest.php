@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-dataset('genre_access_matrix', [
+dataset('genre access matrix', [
     'неавторизованный гость получает 401' => [
         'user' => fn () => null,
         'status' => 401,
@@ -28,33 +28,43 @@ dataset('genre_access_matrix', [
     ],
 ]);
 
-test('возвращает правильную структуру данных', function () {
-    Genre::factory()->count(3)->create();
+describe('GET api/genres (index)', function () {
+    test('возвращает правильную структуру данных', function () {
+        Genre::factory()->count(3)->create();
 
-    $response = $this->getJson('/api/genres');
+        $response = $this->getJson('/api/genres');
 
-    expect($response)
-        ->assertOk()
-        ->assertJsonStructure([
-            'data' => [
-                '*' => ['id', 'name'],
-            ],
-        ]);
+        expect($response)
+            ->assertOk()
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'name'],
+                ],
+            ]);
+    });
 });
 
-test('проверка доступа к редактированию жанра', function (Closure $user, ?int $status) {
-    $genre = Genre::factory()->create(['name' => 'Комедия']);
-    $resolvedUser = $user();
+describe('PATCH api/genres/{genre} (update)', function () {
+    test(
+        'проверка доступа к редактированию жанра',
+        function (Closure $user, ?int $status) {
+            $genre = Genre::factory()->create(['name' => 'Комедия']);
+            $resolvedUser = $user();
 
-    $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
-    $response = $request->patchJson('/api/genres/'.$genre->id, ['name' => 'Ужасы']);
+            $request = $resolvedUser ? $this->actingAs($resolvedUser) : $this;
+            $response = $request->patchJson(
+                '/api/genres/' . $genre->id,
+                ['name' => 'Ужасы']
+            );
 
-    if ($status) {
-        expect($response)->assertStatus($status);
-    } else {
-        expect($response)->assertOk();
-        expect($response->json('data'))
-            ->id->toBe($genre->id)
-            ->name->toBe('Ужасы');
-    }
-})->with('genre_access_matrix');
+            if ($status) {
+                expect($response)->assertStatus($status);
+            } else {
+                expect($response)->assertOk()
+                    ->and($response->json('data'))
+                    ->id->toBe($genre->id)
+                    ->name->toBe('Ужасы');
+            }
+        }
+    )->with('genre access matrix');
+});
