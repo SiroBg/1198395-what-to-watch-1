@@ -10,17 +10,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Promo extends Model
 {
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'film_id',
         ];
 
+    /**
+     * Возвращает промо фильм.
+     *
+     * @return BelongsTo
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);

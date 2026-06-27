@@ -10,15 +10,15 @@ uses(RefreshDatabase::class);
 
 dataset('film access matrix', [
     'неавторизованный гость получает 401' => [
-        'user' => fn () => null,
+        'user'   => fn() => null,
         'status' => 401,
     ],
-    'обычный пользователь получает 403' => [
-        'user' => fn () => User::factory()->create(),
+    'обычный пользователь получает 403'   => [
+        'user'   => fn() => User::factory()->create(),
         'status' => 403,
     ],
     'модератор успешно проходит проверку' => [
-        'user' => function () {
+        'user'   => function () {
             $moderator = User::factory()->create();
             $role = Role::firstOrCreate(['name' => 'moderator']);
             $moderator->roles()->attach($role);

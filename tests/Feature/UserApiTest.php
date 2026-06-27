@@ -18,23 +18,25 @@ beforeEach(function () {
 });
 
 describe('GET api/user (show)', function () {
-    it('возвращает информацию об авторизированном пользователе',
-    function () {
-        $role = Role::create([
-            'name' => 'user',
-        ]);
+    it(
+        'возвращает информацию об авторизированном пользователе',
+        function () {
+            $role = Role::create([
+                'name' => 'user',
+            ]);
 
-        $user = User::factory()->create();
+            $user = User::factory()->create();
 
-        $user->roles()->attach($role);
+            $user->roles()->attach($role);
 
-        Sanctum::actingAs($user);
+            Sanctum::actingAs($user);
 
-        getJson('/api/user')
-            ->assertOk()
-            ->assertJsonPath('data.email', $user->email)
-            ->assertJsonPath('data.name', $user->name);
-    });
+            getJson('/api/user')
+                ->assertOk()
+                ->assertJsonPath('data.email', $user->email)
+                ->assertJsonPath('data.name', $user->name);
+        }
+    );
 
     it('возвращает ошибку 404 для гостя', function () {
         getJson('/api/user')

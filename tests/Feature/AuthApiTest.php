@@ -104,9 +104,11 @@ describe('POST api/logout (logout)', function () {
         expect($user->fresh()->tokens()->count())->toBe(0);
     });
 
-    it('возвращает ошибку 401 при попытке гостя разлогиниться',
+    it(
+        'возвращает ошибку 401 при попытке гостя разлогиниться',
         function () {
-        postJson('/api/logout')
-            ->assertUnauthorized();
-    });
+            postJson('/api/logout')
+                ->assertUnauthorized();
+        }
+    );
 });

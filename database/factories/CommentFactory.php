@@ -12,19 +12,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CommentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    /** {@inheritdoc} */
     #[\Override]
     public function definition(): array
     {
         return [
-            'text' => fake()->paragraph(),
-            'rating' => fake()->numberBetween(1, 10),
-            'user_id' => User::factory(),
-            'film_id' => Film::factory(),
+            'text'       => fake()->paragraph(),
+            'rating'     => fake()->numberBetween(1, 10),
+            'user_id'    => User::factory(),
+            'film_id'    => Film::factory(),
             'comment_id' => null,
         ];
     }
@@ -32,9 +28,9 @@ class CommentFactory extends Factory
     /**
      * @psalm-api
      */
-    public function guest(): static
+    public function guest(): CommentFactory
     {
-        return $this->state(fn (array $_attributes) => [
+        return $this->state(fn(array $_attributes) => [
             'user_id' => null,
         ]);
     }

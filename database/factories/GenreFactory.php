@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class GenreFactory extends Factory
 {
+    /** {@inheritdoc} */
     #[\Override]
     public function definition(): array
     {

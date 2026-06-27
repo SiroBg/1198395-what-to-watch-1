@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @psalm-api
  *
- * @property int $id
- * @property string $text
- * @property string $author_name
+ * @property int            $id
+ * @property string         $text
+ * @property string         $author_name
  * @property-read User|null $user
  */
 class Comment extends Model
@@ -22,15 +22,15 @@ class Comment extends Model
     /** @use HasFactory<CommentFactory> */
     use HasFactory;
 
-    protected $casts =
-        [
-            'rating' => 'int',
+    protected $casts
+        = [
+            'rating'     => 'int',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'text',
             'rating',
             'user_id',
@@ -40,30 +40,55 @@ class Comment extends Model
             'updated_at',
         ];
 
+    /**
+     * Возвращает автора отзыва.
+     *
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Возвращает фильм, к которому относится отзыв.
+     *
+     * @return BelongsTo
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);
     }
 
+    /**
+     * Возвращает отзыв, к которому относится комментарий.
+     *
+     * @return BelongsTo
+     */
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
+    /**
+     * Возвращает ответы на отзыв.
+     *
+     * @return HasMany
+     */
     public function replies(): HasMany
     {
         return $this->hasMany(Comment::class, 'comment_id');
     }
 
+    /**
+     * Возвращает имя автора комментария.
+     *
+     * @return Attribute
+     */
     public function authorName(): Attribute
     {
         return Attribute::get(
-            fn () => $this->user ? $this->user->name : 'Гость',
+            fn() => $this->user ? $this->user->name : 'Гость',
         );
     }
 }

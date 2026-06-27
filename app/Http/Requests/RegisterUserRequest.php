@@ -6,18 +6,28 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RegisterUserRequest extends FormRequest
+final class RegisterUserRequest extends FormRequest
 {
-    public function authorize()
+    /**
+     * Проверяет авторизацию пользователя.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    /**
+     * Правила валидации.
+     *
+     * @return array
+     */
+    public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => [
+            'name'     => 'required|string|max:255',
+            'email'    => [
                 'required',
                 'string',
                 'email',
@@ -30,7 +40,7 @@ class RegisterUserRequest extends FormRequest
                 'min:8',
                 'confirmed',
             ],
-            'file' => 'nullable|image|max:10240',
+            'file'     => 'nullable|image|max:10240',
         ];
     }
 }

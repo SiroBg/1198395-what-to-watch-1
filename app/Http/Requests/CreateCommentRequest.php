@@ -7,33 +7,33 @@ use App\Models\Film;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateCommentRequest extends FormRequest
+final class CreateCommentRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Проверяет авторизацию пользователя.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return auth()->check();
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Правила валидации.
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'text' => [
+            'text'       => [
                 'required',
                 'string',
                 'min:50',
                 'max:400',
             ],
-            'rating' => [
+            'rating'     => [
                 'nullable',
                 'integer',
                 'min:1',
@@ -50,15 +50,25 @@ class CreateCommentRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
+    /**
+     * Валидатор отзывов и комментариев.
+     *
+     * @param $validator
+     *
+     * @return void
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
             $commentId = $this->input('comment_id');
             if ($commentId) {
                 $comment = Comment::find($commentId);
 
-                if (! $comment) {
-                    $validator->errors()->add('comment_id', 'Комментарий не найден.');
+                if (!$comment) {
+                    $validator->errors()->add(
+                        'comment_id',
+                        'Комментарий не найден.'
+                    );
 
                     return;
                 }

@@ -10,6 +10,13 @@ use App\Models\User;
  */
 class CommentPolicy
 {
+    /**
+     * Общая логика политики работы с комментариями.
+     *
+     * @param User $user Пользователь.
+     *
+     * @return bool|null
+     */
     public function before(User $user): ?bool
     {
         if ($user->hasRole('moderator')) {
@@ -20,7 +27,12 @@ class CommentPolicy
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Политика редактирования комментария/отзыва.
+     *
+     * @param User    $user Пользователь.
+     * @param Comment $comment Комментарий.
+     *
+     * @return bool
      */
     public function update(User $user, Comment $comment): bool
     {
@@ -28,11 +40,16 @@ class CommentPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Политика удаления комментария/отзыва.
+     *
+     * @param User    $user Пользователь.
+     * @param Comment $comment Комментарий.
+     *
+     * @return bool
      */
     public function delete(User $user, Comment $comment): bool
     {
         return $comment->user_id === $user->id
-                && ! $comment->replies()->exists();
+            && !$comment->replies()->exists();
     }
 }

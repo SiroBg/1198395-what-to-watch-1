@@ -16,8 +16,19 @@ use Laravel\Sanctum\PersonalAccessToken;
  */
 class AuthController extends Controller
 {
-    public function register(RegisterUserRequest $request, RegisterUserAction $action): Success
-    {
+    /**
+     * Регистрирует пользователя.
+     *
+     * @param RegisterUserRequest $request Запрос из формы.
+     * @param RegisterUserAction  $action Действие.
+     *
+     * @return Success Формат ответа.
+     * @throws \Throwable
+     */
+    public function register(
+        RegisterUserRequest $request,
+        RegisterUserAction $action
+    ): Success {
         $result = $action->execute($request->safe()->except('file'));
 
         return new Success([
@@ -26,9 +37,16 @@ class AuthController extends Controller
         ], 201);
     }
 
+    /**
+     * Логинит пользователя.
+     *
+     * @param LoginRequest $request Запрос из формы.
+     *
+     * @return Success Формат ответа.
+     */
     public function login(LoginRequest $request): Success
     {
-        if (! Auth::attempt($request->validated())) {
+        if (!Auth::attempt($request->validated())) {
             abort(401, trans('auth.failed'));
         }
 
@@ -37,6 +55,11 @@ class AuthController extends Controller
         return new Success(['token' => $token->plainTextToken]);
     }
 
+    /**
+     * Разлогинивает пользователя.
+     *
+     * @return Success Формат ответа.
+     */
     public function logout(): Success
     {
         /** @var User $user */
@@ -45,9 +68,7 @@ class AuthController extends Controller
         /** @var PersonalAccessToken|null $token */
         $token = $user->currentAccessToken();
 
-        if ($token) {
-            $token->delete();
-        }
+        $token?->delete();
 
         return new Success(['message' => 'Logged out']);
     }

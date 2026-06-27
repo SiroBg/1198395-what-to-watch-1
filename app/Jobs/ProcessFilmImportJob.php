@@ -14,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessFilmImportJob implements ShouldQueue
+final class ProcessFilmImportJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -22,17 +22,30 @@ class ProcessFilmImportJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * Создать новый экземпляр задачи.
+     * Создаёт задачу на обработку фильма.
+     *
+     * @param string $imdbId Imdb id фильма.
      */
     public function __construct(
         protected string $imdbId,
-    ) {}
+    ) {
+    }
 
     /**
-     * Выполнить задачу.
+     * Обращается к репозиторию с фильмами и обновляет информацию о фильме.
+     *
+     * @param FilmsRepositoryInterface $filmRepository Репозиторий для обращения за информацией о фильме.
+     * @param SaveFilmAction           $saveFilmAction Действие сохранения фильма.
+     * @param OmdbDataConverter        $converter      Конвертер данных в нужный формат.
+     *
+     * @return void
+     * @throws \Throwable
      */
-    public function handle(FilmsRepositoryInterface $filmRepository, SaveFilmAction $saveFilmAction, OmdbDataConverter $converter): void
-    {
+    public function handle(
+        FilmsRepositoryInterface $filmRepository,
+        SaveFilmAction $saveFilmAction,
+        OmdbDataConverter $converter
+    ): void {
         $externalData = $filmRepository->getFilmByImdbId($this->imdbId);
 
         $convertedData = $converter->convert($externalData);
@@ -42,6 +55,8 @@ class ProcessFilmImportJob implements ShouldQueue
 
         $saveFilmAction->execute($film, $convertedData);
 
-        Log::info("Фильм с IMDb ID {$this->imdbId} успешно импортирован/обновлен в БД.");
+        Log::info(
+            "Фильм с IMDb ID {$this->imdbId} успешно импортирован/обновлен в БД."
+        );
     }
 }

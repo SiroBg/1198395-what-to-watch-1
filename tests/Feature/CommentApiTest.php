@@ -10,11 +10,12 @@ uses(RefreshDatabase::class);
 
 dataset('allowed users for deletion', [
     'автор комментария' => [
-        fn ($comment) => User::find($comment->user_id),
+        fn($comment) => User::find($comment->user_id),
     ],
-    'модератор' => [
-        fn () => tap(User::factory()->create(), function ($user) {
-            $user->roles()->attach(Role::firstOrCreate(['name' => 'moderator']));
+    'модератор'         => [
+        fn() => tap(User::factory()->create(), function ($user) {
+            $user->roles()->attach(Role::firstOrCreate(['name' => 'moderator'])
+            );
         }),
     ],
 ]);
@@ -49,7 +50,7 @@ describe('POST api/comments/{film} (store)', function () {
     test('пользователи могут создавать комментарии', function () {
         $film = Film::factory()->create();
         $commentData = [
-            'text' => str_repeat('X', 100),
+            'text'   => str_repeat('X', 100),
             'rating' => 1,
         ];
 
@@ -74,50 +75,55 @@ describe('POST api/comments/{film} (store)', function () {
 });
 
 describe('PATCH api/comments/{comment} (update)', function () {
-    test('автор комментария может редактировать свой комментарий',
-    function () {
-        $user = User::factory()->create();
-        $comment = Comment::factory()->create(['user_id' => $user->id]);
-        $expectedData = [
-            'text' => str_repeat('X', 100),
-            'rating' => 1,
-        ];
+    test(
+        'автор комментария может редактировать свой комментарий',
+        function () {
+            $user = User::factory()->create();
+            $comment = Comment::factory()->create(['user_id' => $user->id]);
+            $expectedData = [
+                'text'   => str_repeat('X', 100),
+                'rating' => 1,
+            ];
 
-        $response = $this->actingAs($user)->patchJson(
-            '/api/comments/' . $comment->id,
-            $expectedData
-        );
+            $response = $this->actingAs($user)->patchJson(
+                '/api/comments/' . $comment->id,
+                $expectedData
+            );
 
-        expect($response)->assertCreated()
-            ->and($response->json('data'))
-            ->id->toBe($comment->id)
-            ->user_id->toBe($user->id)
-            ->text->toBe($expectedData['text'])
-            ->rating->toBe($expectedData['rating']);
-    });
+            expect($response)->assertCreated()
+                ->and($response->json('data'))
+                ->id->toBe($comment->id)
+                ->user_id->toBe($user->id)
+                ->text->toBe($expectedData['text'])
+                ->rating->toBe($expectedData['rating']);
+        }
+    );
 
-    test('модератор может редактировать чужие комментарии',
-    function () {
-        $moderator = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'moderator']);
-        $moderator->roles()->attach($role);
+    test(
+        'модератор может редактировать чужие комментарии',
+        function () {
+            $moderator = User::factory()->create();
+            $role = Role::firstOrCreate(['name' => 'moderator']);
+            $moderator->roles()->attach($role);
 
-        $comment = Comment::factory()->create();
-        $expectedData = [
-            'text' => str_repeat('X', 100),
-            'rating' => 1,
-        ];
+            $comment = Comment::factory()->create();
+            $expectedData = [
+                'text'   => str_repeat('X', 100),
+                'rating' => 1,
+            ];
 
-        $patchResponse = $this->actingAs($moderator)->patchJson(
-            '/api/comments/'.$comment->id, $expectedData
-        );
+            $patchResponse = $this->actingAs($moderator)->patchJson(
+                '/api/comments/' . $comment->id,
+                $expectedData
+            );
 
-        expect($patchResponse)->assertCreated()
-            ->and($patchResponse->json('data'))
-            ->id->toBe($comment->id)
-            ->text->toBe($expectedData['text'])
-            ->rating->toBe($expectedData['rating']);
-    });
+            expect($patchResponse)->assertCreated()
+                ->and($patchResponse->json('data'))
+                ->id->toBe($comment->id)
+                ->text->toBe($expectedData['text'])
+                ->rating->toBe($expectedData['rating']);
+        }
+    );
 });
 
 describe('DELETE api/comments/{comment} (destroy)', function () {
@@ -137,20 +143,22 @@ describe('DELETE api/comments/{comment} (destroy)', function () {
     )->with('allowed users for deletion');
 });
 
-test('пользователь не может управлять чужим комментарием',
-function (string $method, string $endpointSuffix) {
-    $comment = Comment::factory()->create();
-    $wrongUser = User::factory()->create();
+test(
+    'пользователь не может управлять чужим комментарием',
+    function (string $method, string $endpointSuffix) {
+        $comment = Comment::factory()->create();
+        $wrongUser = User::factory()->create();
 
-    $url = '/api/comments/'.$comment->id.$endpointSuffix;
-    $response = $this->actingAs($wrongUser)->json($method, $url, [
-        'text' => str_repeat('X', 100),
-        'rating' => 5,
-    ]);
+        $url = '/api/comments/' . $comment->id . $endpointSuffix;
+        $response = $this->actingAs($wrongUser)->json($method, $url, [
+            'text'   => str_repeat('X', 100),
+            'rating' => 5,
+        ]);
 
-    expect($response)->assertForbidden();
-})->with([
+        expect($response)->assertForbidden();
+    }
+)->with([
     'при попытке обновления' => ['PATCH', ''],
-    'при попытке удаления' => ['DELETE', ''],
+    'при попытке удаления'   => ['DELETE', ''],
 ]);
 

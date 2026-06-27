@@ -111,13 +111,15 @@ describe('POST api/promo/{film} (setPromo)', function () {
         expect(Promo::count())->toBe(0);
     });
 
-    it('возвращает ошибку 401, если гость меняет промо фильм',
-    function () {
-        $film = Film::factory()->create();
+    it(
+        'возвращает ошибку 401, если гость меняет промо фильм',
+        function () {
+            $film = Film::factory()->create();
 
-        postJson("/api/promo/{$film->id}")
-            ->assertUnauthorized();
+            postJson("/api/promo/{$film->id}")
+                ->assertUnauthorized();
 
-        expect(Promo::count())->toBe(0);
-    });
+            expect(Promo::count())->toBe(0);
+        }
+    );
 });

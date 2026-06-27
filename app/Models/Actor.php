@@ -15,17 +15,22 @@ class Actor extends Model
     /** @use HasFactory<ActorFactory> */
     use HasFactory;
 
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
         ];
 
+    /**
+     * Возвращает фильмы, в которых снимался актёр.
+     *
+     * @return BelongsToMany
+     */
     public function films(): BelongsToMany
     {
         return $this->belongsToMany(Film::class)->withTimestamps();

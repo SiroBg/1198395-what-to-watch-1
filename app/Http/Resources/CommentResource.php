@@ -6,12 +6,14 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+final class CommentResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Возвращает правильный формат комментария.
      *
-     * @return array<string, mixed>
+     * @param Request $request Запрос.
+     *
+     * @return array
      */
     #[\Override]
     public function toArray(Request $request): array
@@ -20,15 +22,15 @@ class CommentResource extends JsonResource
         $comment = $this->resource;
 
         return [
-            'id' => $comment->id,
-            'user_id' => $comment->user_id,
-            'film_id' => $comment->film_id,
+            'id'         => $comment->id,
+            'user_id'    => $comment->user_id,
+            'film_id'    => $comment->film_id,
             'comment_id' => $comment->comment_id,
             'created_at' => $comment->created_at,
             'updated_at' => $comment->updated_at,
-            'text' => $comment->text,
-            'rating' => $comment->rating,
-            'author' => $comment->author_name,
+            'text'       => $comment->text,
+            'rating'     => $comment->rating,
+            'author'     => $comment->author_name,
         ];
     }
 }

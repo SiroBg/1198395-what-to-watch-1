@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="4"
-    resolveFromConfigFile="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        errorLevel="4"
+        resolveFromConfigFile="true"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
         <directory name="app"/>
@@ -27,15 +27,15 @@
     </issueHandlers>
 
     <forbiddenFunctions>
-        <function name="var_dump" />
-        <function name="dd" />
+        <function name="var_dump"/>
+        <function name="dd"/>
     </forbiddenFunctions>
 
     <plugins>
         <pluginClass class="Psalm\LaravelPlugin\Plugin">
-            <resolveDynamicWhereClauses value="true" />
-            <findMissingTranslations value="false" />
-            <findMissingViews value="false" />
+            <resolveDynamicWhereClauses value="true"/>
+            <findMissingTranslations value="false"/>
+            <findMissingViews value="false"/>
         </pluginClass>
     </plugins>
 </psalm>

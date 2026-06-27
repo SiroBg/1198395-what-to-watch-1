@@ -10,17 +10,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Role extends Model
 {
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
         ];
 
+    /**
+     * Возвращает пользователей с данной ролью.
+     *
+     * @return BelongsToMany
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps();

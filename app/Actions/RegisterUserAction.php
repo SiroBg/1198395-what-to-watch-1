@@ -6,12 +6,13 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class RegisterUserAction
+final class RegisterUserAction
 {
     /**
      * Регистрирует пользователя, выдает роль и генерирует токен доступа.
      *
      * @return array ['user' => User, 'token' => string]
+     * @throws \Throwable
      */
     public function execute(array $data): array
     {
@@ -25,7 +26,7 @@ class RegisterUserAction
             $token = $user->createToken('auth-token')->plainTextToken;
 
             return [
-                'user' => $user,
+                'user'  => $user,
                 'token' => $token,
             ];
         });

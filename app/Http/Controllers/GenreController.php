@@ -12,9 +12,11 @@ use App\Models\Genre;
 class GenreController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Возвращает список всех жанров из БД.
+     *
+     * @return Success Формат ответа.
      */
-    public function index()
+    public function index(): Success
     {
         $genres = Genre::all();
 
@@ -22,9 +24,14 @@ class GenreController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновляет информацию о жанре.
+     *
+     * @param UpdateGenreRequest $request Запрос из формы.
+     * @param Genre              $genre Жанр.
+     *
+     * @return Success Формат ответа.
      */
-    public function update(UpdateGenreRequest $request, Genre $genre)
+    public function update(UpdateGenreRequest $request, Genre $genre): Success
     {
         $genre->update($request->validated());
 

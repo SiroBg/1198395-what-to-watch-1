@@ -7,22 +7,32 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+final class UpdateUserRequest extends FormRequest
 {
-    public function authorize()
+    /**
+     * Проверяет авторизацию пользователя.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
     {
         return auth()->check();
     }
 
-    public function rules()
+    /**
+     * Правила валидации.
+     *
+     * @return array
+     */
+    public function rules(): array
     {
         return [
-            'name' => [
+            'name'     => [
                 'required',
                 'string',
                 'max:255',
             ],
-            'email' => [
+            'email'    => [
                 'required',
                 'string',
                 'email',
@@ -35,7 +45,7 @@ class UpdateUserRequest extends FormRequest
                 'min:8',
                 'confirmed',
             ],
-            'file' => [
+            'file'     => [
                 'sometimes',
                 'nullable',
                 'image',

@@ -4,13 +4,23 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateGenreRequest extends FormRequest
+final class UpdateGenreRequest extends FormRequest
 {
+    /**
+     * Проверяет авторизацию пользователя.
+     *
+     * @return bool
+     */
     public function authorize(): bool
     {
         return auth()->check();
     }
 
+    /**
+     * Правила валидации.
+     *
+     * @return array
+     */
     public function rules(): array
     {
         return [

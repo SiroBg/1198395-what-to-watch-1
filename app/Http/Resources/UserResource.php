@@ -6,8 +6,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+final class UserResource extends JsonResource
 {
+    /**
+     * Возвращает правильный формат информации о пользователе.
+     *
+     * @param Request $request Запрос.
+     *
+     * @return array
+     */
     #[\Override]
     public function toArray(Request $request): array
     {
@@ -15,11 +22,11 @@ class UserResource extends JsonResource
         $user = $this->resource;
 
         return [
-            'id' => $user->id,
-            'name' => $user->name,
+            'id'    => $user->id,
+            'name'  => $user->name,
             'email' => $user->email,
-            'file' => $user->file,
-            'role' => $user->roles->first()?->name,
+            'file'  => $user->file,
+            'role'  => $user->roles->first()?->name,
         ];
     }
 }

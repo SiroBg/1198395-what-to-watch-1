@@ -5,8 +5,15 @@ namespace App\Queries;
 use App\Models\Film;
 use Illuminate\Database\Eloquent\Collection;
 
-class GetFilmCommentsQuery
+final class GetFilmCommentsQuery
 {
+    /**
+     * Возвращает отзывы к фильму.
+     *
+     * @param Film $film Фильм.
+     *
+     * @return Collection
+     */
     public function execute(Film $film): Collection
     {
         return $film->comments()

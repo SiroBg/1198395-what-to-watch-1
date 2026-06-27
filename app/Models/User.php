@@ -25,49 +25,72 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
             'email',
             'password',
             'file',
         ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    /** {@inheritdoc} */
     #[\Override]
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
+    /**
+     * Возвращает роль пользователя.
+     *
+     * @return BelongsToMany
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
+    /**
+     * Возвращает список избранных фильмов.
+     *
+     * @return BelongsToMany
+     */
     public function favoriteFilms(): BelongsToMany
     {
-        return $this->belongsToMany(Film::class, 'film_user', 'user_id', 'film_id')->withTimestamps();
+        return $this->belongsToMany(
+            Film::class,
+            'film_user',
+            'user_id',
+            'film_id'
+        )->withTimestamps();
     }
 
+    /**
+     * Возвращает все отзывы/комментарии пользователя.
+     *
+     * @return HasMany
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * Проверяет наличие роли у пользователя.
+     *
+     * @param string $role Роль.
+     *
+     * @return bool
+     */
     public function hasRole(string $role): bool
     {
         return $this->roles()->where('name', $role)->exists();

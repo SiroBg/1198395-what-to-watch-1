@@ -22,7 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/comments/{comment}', [CommentController::class, 'update']);
     Route::get('/favorite', [FavoriteController::class, 'index']);
     Route::post('/films/{film}/favorite', [FavoriteController::class, 'store']);
-    Route::delete('/films/{film}/favorite', [FavoriteController::class, 'destroy']);
+    Route::delete(
+        '/films/{film}/favorite',
+        [FavoriteController::class, 'destroy']
+    );
 });
 
 Route::middleware(['auth:sanctum', 'can:moderator'])->group(function () {
