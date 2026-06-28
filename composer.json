@@ -19,6 +19,7 @@
         "php-http/guzzle7-adapter": "^1.1"
     },
     "require-dev": {
+        "dedoc/scramble": "^0.13.30",
         "fakerphp/faker": "^1.23",
         "laravel-lang/lang": "*",
         "laravel/pail": "^1.2.5",
