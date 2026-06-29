@@ -2,26 +2,33 @@
 
 namespace App\Models;
 
+use Database\Factories\ActorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @psalm-api
+ */
 class Actor extends Model
 {
-    /** @use HasFactory<\Database\Factories\ActorFactory> */
+    /** @use HasFactory<ActorFactory> */
     use HasFactory;
 
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
         ];
 
+    /**
+     * Возвращает фильмы, в которых снимался актёр.
+     */
     public function films(): BelongsToMany
     {
         return $this->belongsToMany(Film::class)->withTimestamps();

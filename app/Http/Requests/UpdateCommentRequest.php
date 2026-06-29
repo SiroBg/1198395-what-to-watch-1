@@ -2,11 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Comment;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCommentRequest extends FormRequest
+final class UpdateCommentRequest extends FormRequest
 {
-    public function rules()
+    /**
+     * Правила валидации.
+     */
+    public function rules(): array
     {
         return [
             'text' => [
@@ -24,10 +28,13 @@ class UpdateCommentRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
+    /**
+     * Валидатор отзывов и комментариев.
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-
+            /** @var Comment|null $comment */
             $comment = $this->route('comment');
 
             if ($comment->comment_id && $this->filled('rating')) {

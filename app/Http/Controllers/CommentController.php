@@ -11,22 +11,37 @@ use App\Models\Comment;
 use App\Models\Film;
 use App\Queries\GetFilmCommentsQuery;
 
+/**
+ * @psalm-api
+ */
 class CommentController extends Controller
 {
+    /**
+     * Создаёт отзыв о фильме или комментарий на существующий отзыв.
+     *
+     * @param  CreateCommentRequest  $request  Запрос из формы.
+     * @param  Film  $film  Фильм.
+     * @return Success Формат ответа.
+     */
     public function store(CreateCommentRequest $request, Film $film)
     {
         $comment = Comment::create([
             'film_id' => $film->id,
             'user_id' => $request->user()->id,
-            'text' => $request->text,
-            'rating' => $request->rating,
-            'comment_id' => $request->comment_id,
+            'text' => $request->safe()->text,
+            'rating' => $request->safe()->rating,
+            'comment_id' => $request->safe()->comment_id,
         ]);
 
         return new Success(new CommentResource($comment), 201);
     }
+
     /**
-     * Display the specified resource.
+     * Возвращает отзывы к фильму.
+     *
+     * @param  Film  $film  Фильм.
+     * @param  GetFilmCommentsQuery  $query  Запрос.
+     * @return Success Формат ответа.
      */
     public function show(Film $film, GetFilmCommentsQuery $query): Success
     {
@@ -36,22 +51,39 @@ class CommentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновляет комментарий или отзыв к фильму.
+     *
+     * @param  UpdateCommentRequest  $request  Запрос из формы.
+     * @param  Comment  $comment  Комментарий.
+     * @return Success Формат ответа.
      */
-    public function update(UpdateCommentRequest $request, Comment $comment): Success
-    {
+    public function update(
+        UpdateCommentRequest $request,
+        Comment $comment
+    ): Success {
         $this->authorize('update', $comment);
 
         $comment->update([
-            'text' => $request->text,
-            'rating' => $comment->comment_id ? null : $request->rating,
+            'text' => $request->safe()->text,
+            'rating' => $comment->comment_id ? null : $request->safe()->rating,
         ]);
 
         return new Success(new CommentResource($comment), 201);
     }
 
-    public function destroy(Comment $comment, DeleteCommentAction $action): Success
-    {
+    /**
+     * Удаляет комментарий или отзыв к фильму.
+     *
+     * @param  Comment  $comment  Комментарий.
+     * @param  DeleteCommentAction  $action  Действие.
+     * @return Success Формат ответа.
+     *
+     * @throws \Throwable
+     */
+    public function destroy(
+        Comment $comment,
+        DeleteCommentAction $action
+    ): Success {
         $this->authorize('delete', $comment);
 
         $action->execute($comment);

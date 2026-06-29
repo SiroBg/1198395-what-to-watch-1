@@ -13,15 +13,12 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * Пароль, используемый фабрикой.
      */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    /** {@inheritdoc} */
+    #[\Override]
     public function definition(): array
     {
         return [
@@ -35,11 +32,13 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Уточняет, что почта пользователя не должна быть верифицированной.
+     *
+     * @psalm-api
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $_attributes) => [
             'email_verified_at' => null,
         ]);
     }

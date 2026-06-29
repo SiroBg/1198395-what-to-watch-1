@@ -2,27 +2,25 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Comment;
+use App\Models\Film;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateCommentRequest extends FormRequest
+final class CreateCommentRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
+     * Проверяет авторизацию пользователя.
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return auth()->check();
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
+     * Правила валидации.
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'text' => [
@@ -48,25 +46,35 @@ class CreateCommentRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
+    /**
+     * Валидатор отзывов и комментариев.
+     */
+    public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            if ($this->comment_id) {
-                $comment = \App\Models\Comment::find($this->comment_id);
+            $commentId = $this->input('comment_id');
+            if ($commentId) {
+                $comment = Comment::find($commentId);
 
-                if (!$comment) {
-                    $validator->errors()->add('comment_id', 'Комментарий не найден.');
+                if (! $comment) {
+                    $validator->errors()->add(
+                        'comment_id',
+                        'Комментарий не найден.'
+                    );
+
                     return;
                 }
 
-                if ($comment->film_id != $this->route('film')->id) {
+                /** @var Film|null $film */
+                $film = $this->route('film');
+
+                if ($comment->film_id !== $film->id) {
                     $validator->errors()->add(
                         'comment_id',
                         'Комментарий принадлежит другому фильму.',
                     );
                 }
             }
-
         });
     }
 }

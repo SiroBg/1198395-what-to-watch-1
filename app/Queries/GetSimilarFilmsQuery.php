@@ -6,10 +6,12 @@ use App\Enums\FilmStatus;
 use App\Http\Resources\FilmPreviewResource;
 use App\Models\Film;
 
-class GetSimilarFilmsQuery
+final class GetSimilarFilmsQuery
 {
     /**
-     * Получить фильм со всеми агрегатами, связями и флагом "избранное" для пользователя.
+     * Возвращает информацию о похожих фильмах по переданному.
+     *
+     * @param  Film  $film  Фильм.
      */
     public function execute(Film $film): array
     {

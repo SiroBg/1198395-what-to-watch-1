@@ -12,11 +12,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CommentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    /** {@inheritdoc} */
+    #[\Override]
     public function definition(): array
     {
         return [
@@ -28,9 +25,12 @@ class CommentFactory extends Factory
         ];
     }
 
-    public function guest(): static
+    /**
+     * @psalm-api
+     */
+    public function guest(): CommentFactory
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $_attributes) => [
             'user_id' => null,
         ]);
     }

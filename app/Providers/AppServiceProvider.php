@@ -12,11 +12,10 @@ use Illuminate\Support\ServiceProvider;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+    /** {@inheritdoc} */
+    #[\Override]
     public function register(): void
     {
         $this->app->bind(ClientInterface::class, Client::class);
@@ -31,11 +30,10 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Запускает сервисы приложения.
      */
     public function boot(): void
     {
-        //
         Gate::define('moderator', function (User $user) {
             return $user->hasRole('moderator');
         });

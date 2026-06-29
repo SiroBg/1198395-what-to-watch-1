@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -13,32 +12,36 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @psalm-api
+ */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory;
-    use Notifiable;
     use HasApiTokens;
 
-    protected $hidden =
-        [
+    /** @use HasFactory<UserFactory> */
+    use HasFactory;
+
+    use Notifiable;
+
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
+            'email',
+            'password',
             'file',
         ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    /** {@inheritdoc} */
+    #[\Override]
     protected function casts(): array
     {
         return [
@@ -47,21 +50,40 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Возвращает роль пользователя.
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
 
+    /**
+     * Возвращает список избранных фильмов.
+     */
     public function favoriteFilms(): BelongsToMany
     {
-        return $this->belongsToMany(Film::class, 'film_user', 'user_id', 'film_id')->withTimestamps();
+        return $this->belongsToMany(
+            Film::class,
+            'film_user',
+            'user_id',
+            'film_id'
+        )->withTimestamps();
     }
 
+    /**
+     * Возвращает все отзывы/комментарии пользователя.
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
+    /**
+     * Проверяет наличие роли у пользователя.
+     *
+     * @param  string  $role  Роль.
+     */
     public function hasRole(string $role): bool
     {
         return $this->roles()->where('name', $role)->exists();

@@ -7,14 +7,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Director>
+ *
+ * @psalm-api
  */
 class DirectorFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    /** {@inheritdoc} */
+    #[\Override]
     public function definition(): array
     {
         return [

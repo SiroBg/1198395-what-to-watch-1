@@ -8,26 +8,67 @@ use App\Models\Film;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateFilmRequest extends FormRequest
+final class UpdateFilmRequest extends FormRequest
 {
+    /**
+     * Проверяет авторизацию пользователя.
+     */
     public function authorize(): bool
     {
         return auth()->check();
     }
 
+    /**
+     * Правила валидации.
+     */
     public function rules(): array
     {
-        $filmId = $this->route('film')->id ?? $this->route('film');
+        /** @var Film|null $film */
+        $film = $this->route('film');
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'poster_image' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'preview_image' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'background_image' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'background_color' => ['sometimes', 'nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'video_link' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'preview_video_link' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'poster_image' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'preview_image' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'background_image' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'background_color' => [
+                'sometimes',
+                'nullable',
+                'regex:/^#[0-9a-fA-F]{6}$/',
+            ],
+            'video_link' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'preview_video_link' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'description' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:1000',
+            ],
             'directors' => ['sometimes', 'array'],
             'directors.*' => ['string', 'max:255'],
             'starring' => ['sometimes', 'array'],
@@ -36,11 +77,24 @@ class UpdateFilmRequest extends FormRequest
             'genre.*' => ['string', 'max:255'],
             'run_time' => ['sometimes', 'nullable', 'integer'],
             'released' => ['sometimes', 'nullable', 'integer'],
-            'imdb_id' => ['required', 'regex:/^tt\d+$/', Rule::unique(Film::class, 'imdb_id')->ignore($filmId)],
+            'imdb_id' => [
+                'required',
+                'regex:/^tt\d+$/',
+                Rule::unique(Film::class, 'imdb_id')
+                    ->ignore($film->id),
+            ],
             'status' => ['required', Rule::enum(FilmStatus::class)],
         ];
     }
 
+    /**
+     * Обновляет информацию о фильме.
+     *
+     * @param  Film  $film  Фильм.
+     * @param  SaveFilmAction  $saveFilmAction  Действие.
+     *
+     * @throws \Throwable
+     */
     public function save(Film $film, SaveFilmAction $saveFilmAction): Film
     {
         return $saveFilmAction->execute($film, $this->validated());

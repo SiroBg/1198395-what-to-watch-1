@@ -3,31 +3,45 @@
 namespace App\Models;
 
 use App\Enums\FilmStatus;
+use Database\Factories\FilmFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @psalm-api
+ *
+ * @property int $id
+ * @property string $name
+ * @property float|int|null $rating
+ * @property int|null $scores_count
+ * @property bool|int|null $is_favorite
+ * @property-read Collection|Director[] $directors
+ * @property-read Collection|Actor[]    $actors
+ * @property-read Collection|Genre[]    $genres
+ */
 class Film extends Model
 {
-    /** @use HasFactory<\Database\Factories\FilmFactory> */
+    /** @use HasFactory<FilmFactory> */
     use HasFactory;
 
-    protected $casts =
-        [
+    protected $casts
+        = [
             'run_time' => 'int',
             'released' => 'int',
             'status' => FilmStatus::class,
         ];
 
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
             'poster_image',
             'preview_image',
@@ -42,68 +56,121 @@ class Film extends Model
             'status',
         ];
 
+    /**
+     * Возвращает жанры фильма.
+     */
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class)->withTimestamps();
     }
 
+    /**
+     * Возвращает список актёров, снимавшихся в фильме.
+     */
     public function actors(): BelongsToMany
     {
         return $this->belongsToMany(Actor::class)->withTimestamps();
     }
 
+    /**
+     * Возвращает список режиссёров фильма.
+     */
     public function directors(): BelongsToMany
     {
         return $this->belongsToMany(Director::class)->withTimestamps();
     }
 
+    /**
+     * Возвращает список пользователей, добавивших фильм в избранное.
+     */
     public function favoritedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'film_user', 'film_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(
+            User::class,
+            'film_user',
+            'film_id',
+            'user_id'
+        )->withTimestamps();
     }
 
+    /**
+     * Возвращает отзывы к фильму.
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function scopeGenre($query, ?int $genreId)
-    {
+    /**
+     * Добавляет фильтр жанра к запросу.
+     *
+     * @param  int|null  $genreId  Id Жанра.
+     */
+    public function scopeGenre(
+        $query,
+        ?int $genreId
+    ): mixed {
         return $genreId
             ? $query->whereHas('genres', fn ($q) => $q->whereKey($genreId))
             : $query;
     }
 
-    public function scopeWithIsFavorite($query, ?int $userId)
+    /**
+     * Добавляет к запросу поле is_favorite (добавлен ли фильм в избранное
+     * пользователем).
+     *
+     * @param  int|null  $userId  Id пользователя.
+     */
+    public function scopeWithIsFavorite($query, ?int $userId): mixed
     {
-        if (!$userId) {
+        if (! $userId) {
             return $query->selectRaw('0 as is_favorite');
         }
 
-        return $query->withExists(['favoritedBy as is_favorite' => function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        }]);
+        return $query->withExists([
+            'favoritedBy as is_favorite' => function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            },
+        ]);
     }
 
-    public function scopeStatus($query, ?string $status)
+    /**
+     * Добавляет фильтр по статусу фильма.
+     *
+     * @param  string|null  $status  Статус.
+     */
+    public function scopeStatus($query, ?string $status): mixed
     {
-        if (!$status) {
+        if (! $status) {
             $status = FilmStatus::READY->value;
         }
 
         return $query->where('status', $status);
     }
 
-    public function scopeWithRating($query)
+    /**
+     * Добавляет к запросу поле rating (среднее значение по всем отзывам).
+     */
+    public function scopeWithRating($query): mixed
     {
         return $query->withAvg('comments as rating', 'rating');
     }
 
-    public function scopeSorting($query, string $field, string $direction)
-    {
+    /**
+     * Добавляет фильтр сортировки по полю и направлению.
+     *
+     * @param  string  $field  Поле (order_by).
+     * @param  string  $direction  Направление (order_to).
+     */
+    public function scopeSorting(
+        $query,
+        string $field,
+        string $direction
+    ): mixed {
         if ($field === 'rating') {
             $query->withRating();
         }
+
         return $query->orderBy($field, $direction);
     }
 }

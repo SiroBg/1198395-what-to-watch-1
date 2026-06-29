@@ -2,26 +2,33 @@
 
 namespace App\Models;
 
+use Database\Factories\DirectorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @psalm-api
+ */
 class Director extends Model
 {
-    /** @use HasFactory<\Database\Factories\DirectorFactory> */
+    /** @use HasFactory<DirectorFactory> */
     use HasFactory;
 
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
         ];
 
+    /**
+     * Возвращает список фильмов, снятых режиссёром.
+     */
     public function films(): BelongsToMany
     {
         return $this->belongsToMany(Film::class)->withTimestamps();

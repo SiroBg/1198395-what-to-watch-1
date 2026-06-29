@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Genre>
+ *
+ * @psalm-api
  */
 class GenreFactory extends Factory
 {
+    /** {@inheritdoc} */
+    #[\Override]
     public function definition(): array
     {
         return [

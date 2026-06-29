@@ -6,10 +6,20 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class UpdateUserAction
+final class UpdateUserAction
 {
-    public function execute(User $user, array $data, ?UploadedFile $file = null): User
-    {
+    /**
+     * Обновляет информацию о пользователе.
+     *
+     * @param  User  $user  Пользователь.
+     * @param  array  $data  Данные формы.
+     * @param  UploadedFile|null  $file  Аватарка.
+     */
+    public function execute(
+        User $user,
+        array $data,
+        ?UploadedFile $file = null
+    ): User {
         if ($file) {
             if ($user->file) {
                 Storage::disk('public')->delete($user->file);

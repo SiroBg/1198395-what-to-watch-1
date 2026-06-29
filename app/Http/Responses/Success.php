@@ -6,8 +6,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
-class Success extends Base
+final class Success extends Base
 {
+    /**
+     * Создаёт экземпляр успешного ответа сервера.
+     *
+     * @param  mixed  $data  Данные ответа.
+     * @param  int  $statusCode  Статус-код.
+     */
     public function __construct(
         mixed $data = [],
         int $statusCode = Response::HTTP_OK,
@@ -15,6 +21,8 @@ class Success extends Base
         parent::__construct($data, $statusCode);
     }
 
+    /** {@inheritdoc} */
+    #[\Override]
     protected function makeResponseData(): ?array
     {
         if ($this->data instanceof ResourceCollection) {
@@ -32,6 +40,7 @@ class Success extends Base
 
         if ($this->data instanceof JsonResource) {
             $resourceData = $this->data->toResponse(request())->getData(true);
+
             return [
                 'data' => $resourceData['data'] ?? $resourceData,
             ];

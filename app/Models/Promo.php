@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @psalm-api
+ */
 class Promo extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoleFactory> */
-    use HasFactory;
-
-    protected $hidden =
-        [
+    protected $hidden
+        = [
             'created_at',
             'updated_at',
         ];
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'film_id',
         ];
 
+    /**
+     * Возвращает промо фильм.
+     */
     public function film(): BelongsTo
     {
         return $this->belongsTo(Film::class);

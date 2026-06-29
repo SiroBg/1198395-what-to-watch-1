@@ -15,22 +15,35 @@ use App\Queries\FetchFilmsQuery;
 use App\Queries\GetFilmWithMetadataQuery;
 use App\Queries\GetSimilarFilmsQuery;
 
+/**
+ * @psalm-api
+ */
 class FilmController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Возвращает список фильмов с пагинацией.
+     *
+     * @param  FilmIndexRequest  $request  Запрос из формы.
+     * @param  FetchFilmsQuery  $query  Формат запроса.
+     * @return Success Формат ответа.
      */
-    public function index(FilmIndexRequest $request, FetchFilmsQuery $query)
-    {
+    public function index(
+        FilmIndexRequest $request,
+        FetchFilmsQuery $query
+    ): Success {
         $films = $query->execute($request->validated());
 
         return new Success(FilmPreviewResource::collection($films));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Добавляет фильм в БД и создаёт фоновую задачу на обновление информации
+     * о фильме.
+     *
+     * @param  CreateFilmRequest  $request  Запрос из формы.
+     * @return Success Формат ответа.
      */
-    public function store(CreateFilmRequest $request)
+    public function store(CreateFilmRequest $request): Success
     {
         $film = Film::create([
             'imdb_id' => $request['imdb_id'],
@@ -42,9 +55,13 @@ class FilmController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Возвращает информацию о фильме.
+     *
+     * @param  Film  $film  Фильм.
+     * @param  GetFilmWithMetadataQuery  $query  Запрос.
+     * @return Success Формат ответа.
      */
-    public function show(Film $film, GetFilmWithMetadataQuery $query)
+    public function show(Film $film, GetFilmWithMetadataQuery $query): Success
     {
         $userId = auth('sanctum')->id();
 
@@ -54,10 +71,18 @@ class FilmController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновляет информацию о фильме.
+     *
+     * @param  UpdateFilmRequest  $request  Запрос из формы.
+     * @param  Film  $film  Фильм.
+     * @param  SaveFilmAction  $action  Действие.
+     * @return Success Формат ответа.
      */
-    public function update(UpdateFilmRequest $request, Film $film, SaveFilmAction $action)
-    {
+    public function update(
+        UpdateFilmRequest $request,
+        Film $film,
+        SaveFilmAction $action
+    ): Success {
         $film = $request->save($film, $action);
 
         $film->load(['actors', 'directors', 'genres']);
@@ -65,14 +90,27 @@ class FilmController extends Controller
         return new Success($film->toArray());
     }
 
-    public function similar(Film $film, GetSimilarFilmsQuery $query)
+    /**
+     * Возвращает 4 похожих фильма.
+     *
+     * @param  Film  $film  Фильм.
+     * @param  GetSimilarFilmsQuery  $query  Запрос.
+     * @return Success Формат ответа.
+     */
+    public function similar(Film $film, GetSimilarFilmsQuery $query): Success
     {
         $films = $query->execute($film);
 
         return new Success($films);
     }
 
-    public function promo(GetFilmWithMetadataQuery $query)
+    /**
+     * Возвращает промо фильм.
+     *
+     * @param  GetFilmWithMetadataQuery  $query  Запрос.
+     * @return Success Формат ответа.
+     */
+    public function promo(GetFilmWithMetadataQuery $query): Success
     {
         $promo = Promo::firstOrFail();
         $userId = auth('sanctum')->id();
@@ -82,7 +120,13 @@ class FilmController extends Controller
         return new Success($filmResource);
     }
 
-    public function setPromo(Film $film)
+    /**
+     * Устанавливает промо фильм.
+     *
+     * @param  Film  $film  Фильм.
+     * @return Success Формат ответа.
+     */
+    public function setPromo(Film $film): Success
     {
         Promo::truncate();
 

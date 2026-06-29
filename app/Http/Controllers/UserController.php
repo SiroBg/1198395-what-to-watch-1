@@ -8,12 +8,17 @@ use App\Http\Resources\UserResource;
 use App\Http\Responses\Success;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @psalm-api
+ */
 class UserController extends Controller
 {
     /**
-     * Display the specified resource.
+     * Возвращает информацию об авторизованном пользователе.
+     *
+     * @return Success Формат ответа.
      */
-    public function show()
+    public function show(): Success
     {
         $user = Auth::user()->load('roles');
 
@@ -21,10 +26,16 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Обновляет информацию об авторизованном пользователе.
+     *
+     * @param  UpdateUserRequest  $request  Запрос из формы.
+     * @param  UpdateUserAction  $action  Действие.
+     * @return Success Формат ответа.
      */
-    public function update(UpdateUserRequest $request, UpdateUserAction $action)
-    {
+    public function update(
+        UpdateUserRequest $request,
+        UpdateUserAction $action
+    ): Success {
         $user = Auth::user()->load('roles');
 
         $updatedUser = $action->execute(

@@ -2,28 +2,33 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+final class CommentResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Возвращает правильный формат комментария.
      *
-     * @return array<string, mixed>
+     * @param  Request  $request  Запрос.
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var Comment $comment */
+        $comment = $this->resource;
+
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'film_id' => $this->film_id,
-            'comment_id' => $this->comment_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'text' => $this->text,
-            'rating' => $this->rating,
-            'author' => $this->author_name,
+            'id' => $comment->id,
+            'user_id' => $comment->user_id,
+            'film_id' => $comment->film_id,
+            'comment_id' => $comment->comment_id,
+            'created_at' => $comment->created_at,
+            'updated_at' => $comment->updated_at,
+            'text' => $comment->text,
+            'rating' => $comment->rating,
+            'author' => $comment->author_name,
         ];
     }
 }

@@ -5,14 +5,18 @@ namespace App\Queries;
 use App\Http\Resources\FilmResource;
 use App\Models\Film;
 
-class GetFilmWithMetadataQuery
+final class GetFilmWithMetadataQuery
 {
     /**
-     * Получить фильм со всеми агрегатами, связями и флагом "избранное" для пользователя.
-     * @param int $filmId
+     * Возвращает информацию о фильме со всеми необходимыми данными.
+     *
+     * @param  int  $filmId  Id фильма.
+     * @param  int|string|null  $userId  Id пользователя.
      */
-    public function execute(int $filmId, ?int $userId = null): FilmResource
-    {
+    public function execute(
+        int $filmId,
+        int|string|null $userId = null
+    ): FilmResource {
         $film = Film::query()
             ->withRating()
             ->withCount('comments as scores_count')
@@ -20,6 +24,7 @@ class GetFilmWithMetadataQuery
             ->withIsFavorite($userId)
             ->whereKey($filmId)
             ->firstOrFail();
+
         return new FilmResource($film);
     }
 }

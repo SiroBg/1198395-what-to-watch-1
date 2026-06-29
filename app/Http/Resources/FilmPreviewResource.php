@@ -2,23 +2,28 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Film;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FilmPreviewResource extends JsonResource
+final class FilmPreviewResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Возвращает правильный формат превью фильма.
      *
-     * @return array<string, mixed>
+     * @param  Request  $request  Запрос.
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var Film $film */
+        $film = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'preview_image' => $this->preview_image,
-            'preview_video_link' => $this->preview_video_link,
+            'id' => $film->id,
+            'name' => $film->name,
+            'preview_image' => $film->preview_image,
+            'preview_video_link' => $film->preview_video_link,
         ];
     }
 }

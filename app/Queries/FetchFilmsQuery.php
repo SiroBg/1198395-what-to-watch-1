@@ -7,16 +7,19 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-class FetchFilmsQuery
+final class FetchFilmsQuery
 {
     /**
      * Выполняет гибкую фильтрацию и пагинацию фильмов.
      *
-     * @param array $filters Данные из Request
-     * @param Builder|Relation|null $baseQuery Базовый запрос (например, связь favoriteFilms())
+     * @param  array  $filters  Данные из Request
+     * @param  Builder|Relation|null  $baseQuery  Базовый запрос. Например,
+     *                                            связь favoriteFilms.
      */
-    public function execute(array $filters, Builder|Relation $baseQuery = null): LengthAwarePaginator
-    {
+    public function execute(
+        array $filters,
+        Builder|Relation|null $baseQuery = null
+    ): LengthAwarePaginator {
         $query = $baseQuery ?? Film::query();
 
         return $query

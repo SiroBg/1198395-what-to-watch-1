@@ -2,19 +2,29 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+final class UserResource extends JsonResource
 {
+    /**
+     * Возвращает правильный формат информации о пользователе.
+     *
+     * @param  Request  $request  Запрос.
+     */
+    #[\Override]
     public function toArray(Request $request): array
     {
+        /** @var User $user */
+        $user = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'file' => $this->file,
-            'role' => $this->roles->first()?->name,
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'file' => $user->file,
+            'role' => $user->roles->first()?->name,
         ];
     }
 }
